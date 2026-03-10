@@ -19,7 +19,8 @@
   }
 
   body {
-    @apply bg-black text-slate-900;
+    background-color: #000;
+    color: #0f172a;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -45,6 +46,12 @@
 
   .tabular-nums {
     font-variant-numeric: tabular-nums;
+  }
+}
+
+@supports (-webkit-touch-callout: none) {
+  .h-screen {
+    height: -webkit-fill-available;
   }
 }
 

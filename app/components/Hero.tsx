@@ -4,23 +4,23 @@ import { motion, AnimatePresence, useScroll, useSpring, useTransform } from "fra
 import type { IntroPhase } from "../lib/intro";
 
 // ─────────────────────────────────────────
-// CONSTANTS — defined once outside all components, never recreated
+// CONSTANTS
 // ─────────────────────────────────────────
 const IMG_W = 1536;
 const IMG_H = 1024;
 const FACE  = { x: 803, y: 115, w: 320, h: 447 } as const;
 
 const LANDMARK_RATIOS = [
-  { rx: 0.35, ry: 0.27 }, // left eye
-  { rx: 0.65, ry: 0.27 }, // right eye
-  { rx: 0.50, ry: 0.18 }, // forehead
-  { rx: 0.50, ry: 0.48 }, // nose tip
-  { rx: 0.50, ry: 0.65 }, // mouth
-  { rx: 0.50, ry: 0.88 }, // chin
-  { rx: 0.22, ry: 0.42 }, // left cheek
-  { rx: 0.78, ry: 0.42 }, // right cheek
-  { rx: 0.30, ry: 0.55 }, // left jaw
-  { rx: 0.70, ry: 0.55 }, // right jaw
+  { rx: 0.35, ry: 0.27 },
+  { rx: 0.65, ry: 0.27 },
+  { rx: 0.50, ry: 0.18 },
+  { rx: 0.50, ry: 0.48 },
+  { rx: 0.50, ry: 0.65 },
+  { rx: 0.50, ry: 0.88 },
+  { rx: 0.22, ry: 0.42 },
+  { rx: 0.78, ry: 0.42 },
+  { rx: 0.30, ry: 0.55 },
+  { rx: 0.70, ry: 0.55 },
 ] as const;
 
 const GHOST_ITEMS = [
@@ -912,11 +912,17 @@ type HeroProps = {
 
 export default function Hero({ phase }: HeroProps) {
   const ref = useRef<HTMLElement>(null);
-  const [email, setEmail]         = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState("");
-  const [openCard, setOpenCard]   = useState<"glow" | "face" | "routine" | null>(null);
+  const [email, setEmail]               = useState("");
+  const [submitted, setSubmitted]       = useState(false);
+  const [loading, setLoading]           = useState(false);
+  const [error, setError]               = useState("");
+  const [openCard, setOpenCard]         = useState<"glow" | "face" | "routine" | null>(null);
+  // ── iOS KEYBOARD FIX ─────────────────────────────────────────────────────
+  // When the keyboard opens on iOS it resizes the viewport, which fires a
+  // scroll event and trips the parallax transforms — pushing everything off
+  // screen. We track input focus and freeze all scroll-driven motion while
+  // the keyboard is visible.
+  const [inputFocused, setInputFocused] = useState(false);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const smooth   = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
@@ -953,17 +959,22 @@ export default function Hero({ phase }: HeroProps) {
     }
   }, [email]);
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => { if (e.key === "Enter") handleSubmit(); }, [handleSubmit]);
-  const closeCard     = useCallback(() => setOpenCard(null), []);
-  const openGlow      = useCallback(() => setOpenCard("glow"),    []);
-  const openFace      = useCallback(() => setOpenCard("face"),    []);
-  const openRoutine   = useCallback(() => setOpenCard("routine"), []);
+  const handleKeyDown  = useCallback((e: React.KeyboardEvent) => { if (e.key === "Enter") handleSubmit(); }, [handleSubmit]);
+  const handleFocus    = useCallback(() => setInputFocused(true),  []);
+  const handleBlur     = useCallback(() => setInputFocused(false), []);
+  const closeCard      = useCallback(() => setOpenCard(null),      []);
+  const openGlow       = useCallback(() => setOpenCard("glow"),    []);
+  const openFace       = useCallback(() => setOpenCard("face"),    []);
+  const openRoutine    = useCallback(() => setOpenCard("routine"), []);
 
   return (
     <section ref={ref} id="hero-section" className="relative w-full h-screen overflow-hidden bg-black">
 
-      {/* Background image */}
-      <motion.div style={{ y: imageY }} className="absolute inset-0 scale-[1.06]">
+      {/* Background image — parallax frozen while keyboard open */}
+      <motion.div
+        style={{ y: inputFocused ? "0%" : imageY }}
+        className="absolute inset-0 scale-[1.06]"
+      >
         <img
           src="/hero-bg.png" alt=""
           className="h-full w-full object-cover object-center"
@@ -988,7 +999,6 @@ export default function Hero({ phase }: HeroProps) {
       <AnimatePresence>
         {isRevealed && (
           <>
-            {/* Flash */}
             <motion.div
               className="absolute inset-0 pointer-events-none"
               style={{ background: "rgba(255,225,238,1)", zIndex: 15 }}
@@ -996,7 +1006,6 @@ export default function Hero({ phase }: HeroProps) {
               animate={{ opacity: [0, 0.6, 0] }}
               transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
             />
-            {/* Radial bloom */}
             <motion.div className="absolute pointer-events-none" style={{
               left:"62%", top:"33%", width:600, height:600,
               transform:"translate(-50%,-50%)", borderRadius:"50%",
@@ -1030,11 +1039,15 @@ export default function Hero({ phase }: HeroProps) {
       <div className="absolute inset-0 pointer-events-none" style={{ zIndex:4, background:"linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 40%)" }} />
 
       {/* ── LEFT — Waitlist content ── */}
-      {/* MOBILE FIX: w-full + tighter padding on mobile, wider on sm+, capped on md+ */}
       {isRevealed && (
         <motion.div
-          style={{ y: contentY, opacity, zIndex: 20 }}
-          className="absolute bottom-0 left-0 w-full px-6 pb-10 sm:px-10 sm:pb-16 md:px-20 md:pb-24 md:max-w-[560px]"
+          style={{
+            // Freeze position + opacity while iOS keyboard is open
+            y:       inputFocused ? "0%" : contentY,
+            opacity: inputFocused ? 1    : opacity,
+            zIndex: 20,
+          }}
+          className="absolute bottom-0 left-0 px-6 pb-10 max-w-[65vw] sm:max-w-none sm:w-full sm:px-10 sm:pb-16 md:px-20 md:pb-24 md:max-w-[560px]"
         >
           <motion.div
             initial={{ opacity: 0, y: 6 }}
@@ -1048,13 +1061,12 @@ export default function Hero({ phase }: HeroProps) {
             </div>
           </motion.div>
 
-          {/* MOBILE FIX: headline scales down on mobile */}
           <div className="overflow-hidden mb-1">
             <motion.h1
               initial={{ y: "105%" }}
               animate={{ y: 0 }}
               transition={{ duration: 1.4, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[38px] sm:text-[52px] md:text-[68px] font-light text-white leading-[0.92] tracking-[-0.02em]"
+              className="text-[30px] sm:text-[52px] md:text-[68px] font-light text-white leading-[0.96] tracking-[-0.02em]"
             >
               Glow-up that starts
             </motion.h1>
@@ -1064,7 +1076,7 @@ export default function Hero({ phase }: HeroProps) {
               initial={{ y: "105%" }}
               animate={{ y: 0 }}
               transition={{ duration: 1.4, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-              className="text-[38px] sm:text-[52px] md:text-[68px] font-light text-white leading-[0.92] tracking-[-0.02em]"
+              className="text-[30px] sm:text-[52px] md:text-[68px] font-light text-white leading-[0.96] tracking-[-0.02em]"
             >
               with <span className="italic" style={{ color: "#F9A8C9" }}>you.</span>
             </motion.h1>
@@ -1083,7 +1095,7 @@ export default function Hero({ phase }: HeroProps) {
             ].map((line, i) => (
               <div key={i} className="flex items-start gap-2.5">
                 <div className="w-1 h-1 rounded-full mt-[7px] flex-shrink-0" style={{ background: "#F9A8C9" }} />
-                <p className="text-[13px] font-light text-white/50 leading-[1.6]">{line}</p>
+                <p className="text-[12px] sm:text-[13px] font-light text-white/50 leading-[1.6]">{line}</p>
               </div>
             ))}
           </motion.div>
@@ -1095,13 +1107,14 @@ export default function Hero({ phase }: HeroProps) {
           >
             {!submitted ? (
               <div className="flex flex-col gap-3">
-                {/* MOBILE FIX: stacked on mobile, side-by-side on sm+ */}
                 <div className="flex flex-col sm:flex-row gap-2">
                   <input
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     onKeyDown={handleKeyDown}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
                     placeholder="Enter your email"
                     className="w-full sm:flex-1 sm:min-w-0 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-5 py-3.5 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-white/40 transition-all duration-200"
                   />
@@ -1185,25 +1198,6 @@ export default function Hero({ phase }: HeroProps) {
       )}
 
       <CardModal card={openCard} onClose={closeCard} />
-
-      {/* Scroll indicator */}
-      {isRevealed && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.6, duration: 1.0 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          style={{ zIndex: 20 }}
-        >
-          <div className="w-px h-10 bg-white/15 relative overflow-hidden rounded-full">
-            <motion.div
-              animate={{ y: ["-100%", "100%"] }}
-              transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
-              className="w-full h-1/2 rounded-full bg-white/35"
-            />
-          </div>
-        </motion.div>
-      )}
 
     </section>
   );
