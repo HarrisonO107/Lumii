@@ -912,6 +912,8 @@ export default function Hero() {
   const [phase, setPhase]         = useState<"hidden" | "scanning" | "revealed">("hidden");
   const [email, setEmail]         = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading]     = useState(false);
+  const [error, setError]         = useState("");
   const [openCard, setOpenCard]   = useState<"glow" | "face" | "routine" | null>(null);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
@@ -936,7 +938,30 @@ export default function Hero() {
     // Don't remove on cleanup — Nav needs to read "revealed" after mount
   }, [phase]);
 
-  const handleSubmit  = useCallback(() => { if (email.includes("@")) setSubmitted(true); }, [email]);
+  const handleSubmit = useCallback(async () => {
+    if (!email.includes("@")) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        setError("Something went wrong. Please try again.");
+      }
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [email]);
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => { if (e.key === "Enter") handleSubmit(); }, [handleSubmit]);
   const closeCard     = useCallback(() => setOpenCard(null), []);
   const openGlow      = useCallback(() => setOpenCard("glow"),    []);
@@ -1068,9 +1093,11 @@ export default function Hero() {
         >
           {!submitted ? (
             <div className="flex flex-col gap-3">
+              {/* Email + CTA row */}
               <div className="flex gap-2">
                 <input
-                  type="email" value={email}
+                  type="email"
+                  value={email}
                   onChange={e => setEmail(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Enter your email"
@@ -1078,12 +1105,15 @@ export default function Hero() {
                 />
                 <motion.button
                   onClick={handleSubmit}
-                  whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-                  className="bg-white text-slate-900 font-semibold text-[13px] px-6 py-3.5 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.25)] whitespace-nowrap flex-shrink-0"
+                  disabled={loading}
+                  whileHover={{ scale: loading ? 1 : 1.02 }}
+                  whileTap={{ scale: loading ? 1 : 0.97 }}
+                  className="bg-white text-slate-900 font-semibold text-[13px] px-6 py-3.5 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.25)] whitespace-nowrap flex-shrink-0 disabled:opacity-60 transition-opacity"
                 >
-                  Reserve my spot →
+                  {loading ? "Reserving…" : "Reserve my spot →"}
                 </motion.button>
               </div>
+
               <div className="flex items-center gap-2 pl-1">
                 <div className="h-1 w-16 bg-white/10 rounded-full overflow-hidden">
                   <div className="h-full rounded-full" style={{ width:"73%", background:"linear-gradient(90deg, #F9A8C9, #f472b6)" }} />
