@@ -10,44 +10,35 @@ const NAV_ITEMS = [
   { label: "Contact",      href: "#contact"       },
 ] as const;
 
-export default function Nav() {
-  const [ready,      setReady]      = useState(false);
-  const [scrolled,   setScrolled]   = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+type NavProps = {
+  isIntroComplete: boolean;
+};
 
-  // ── Wait for hero scan to finish before appearing ──
-  useEffect(() => {
-    // Already revealed (return visit / fast load)
-    if (document.body.getAttribute("data-hero-phase") === "revealed") {
-      setReady(true);
-      return;
-    }
-    // Hero sets phase at 600ms (scanning) and 5000ms (revealed).
-    // Listen for both the attribute change AND a fallback timeout.
-    const observer = new MutationObserver(() => {
-      if (document.body.getAttribute("data-hero-phase") === "revealed") {
-        setReady(true);
-        observer.disconnect();
-      }
-    });
-    observer.observe(document.body, {
-      attributes: true,
-      attributeFilter: ["data-hero-phase"],
-    });
-    // Hard fallback — if observer somehow misses it, show nav at 5.5s
-    const fallback = setTimeout(() => setReady(true), 5500);
-    return () => {
-      observer.disconnect();
-      clearTimeout(fallback);
-    };
-  }, []);
+export default function Nav({ isIntroComplete }: NavProps) {
+  const [scrolled,   setScrolled]   = useState(
+    () => typeof window !== "undefined" && window.scrollY > 60
+  );
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   // ── Scroll state ──
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    onScroll();
+    let frame = 0;
+    const updateScrolled = () => {
+      frame = 0;
+      const nextScrolled = window.scrollY > 60;
+      setScrolled((current) => (current === nextScrolled ? current : nextScrolled));
+    };
+    const onScroll = () => {
+      if (frame !== 0) return;
+      frame = window.requestAnimationFrame(updateScrolled);
+    };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frame !== 0) {
+        window.cancelAnimationFrame(frame);
+      }
+    };
   }, []);
 
   // ── Lock body scroll when mobile menu open ──
@@ -56,19 +47,24 @@ export default function Nav() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
+  if (!isIntroComplete) {
+    return null;
+  }
+
   return (
     <>
       <motion.nav
-        initial={{ y: -12, opacity: 0 }}
-        animate={{ y: ready ? 0 : -12, opacity: ready ? 1 : 0 }}
-        transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
         style={{
-          backdropFilter:       scrolled ? "blur(20px)" : "blur(10px)",
-          WebkitBackdropFilter: scrolled ? "blur(20px)" : "blur(10px)",
-          background:    scrolled ? "rgba(255,255,255,0.92)" : "rgba(255,255,255,0.05)",
-          borderBottom:  scrolled ? "1px solid rgba(0,0,0,0.06)" : "1px solid rgba(255,255,255,0.1)",
+          backdropFilter: "blur(18px)",
+          WebkitBackdropFilter: "blur(18px)",
+          background: scrolled ? "rgba(255,255,255,0.92)" : "rgba(16,18,25,0.22)",
+          borderBottom: scrolled ? "1px solid rgba(15,23,42,0.08)" : "1px solid rgba(255,255,255,0.12)",
+          boxShadow: scrolled ? "0 14px 40px rgba(15, 23, 42, 0.08)" : "0 10px 30px rgba(0, 0, 0, 0.18)",
         }}
-        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
+        className="fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-300"
       >
         <div
           className="h-[72px] flex items-center justify-between"
@@ -115,7 +111,7 @@ export default function Nav() {
 
           {/* Mobile hamburger */}
           <button
-            onClick={() => setMobileOpen(!mobileOpen)}
+            onClick={() => setMobileOpen((open) => !open)}
             className="md:hidden relative w-8 h-8 flex flex-col items-center justify-center gap-[5px]"
             aria-label="Toggle menu"
           >
@@ -127,7 +123,7 @@ export default function Nav() {
       </motion.nav>
 
       {/* Mobile menu overlay */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {mobileOpen && (
           <motion.div
             initial={{ opacity: 0 }}

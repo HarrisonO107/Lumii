@@ -1,6 +1,7 @@
 "use client";
 import { useRef, useEffect, useState, useCallback, memo, useMemo } from "react";
 import { motion, AnimatePresence, useScroll, useSpring, useTransform } from "framer-motion";
+import type { IntroPhase } from "../lib/intro";
 
 // ─────────────────────────────────────────
 // CONSTANTS — defined once outside all components, never recreated
@@ -98,7 +99,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
 
   useEffect(() => () => clearAllAsync(), [clearAllAsync]);
 
-  // ── Measure face box ──
   const toScreen = useCallback(
     (imgX: number, imgY: number, scale: number, ox: number, oy: number) => ({
       x: imgX * scale - ox,
@@ -125,7 +125,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
     return () => window.removeEventListener("resize", measure);
   }, [toScreen]);
 
-  // ── Progress counter via rAF ──
   useEffect(() => {
     if (!isScanning) { setProgress(0); return; }
     const DURATION = 4200;
@@ -139,7 +138,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
     return () => cancelAnimationFrame(rafRef.current);
   }, [isScanning]);
 
-  // ── Node landing sequence ──
   useEffect(() => {
     if (!isScanning) { setNodeCount(0); return; }
     setNodeCount(0);
@@ -154,7 +152,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
     };
   }, [isScanning]);
 
-  // ── Ghost data — single interval, batch update ──
   useEffect(() => {
     if (!isScanning) { setGhostVals(GHOST_INIT); return; }
     const iv = setInterval(() => {
@@ -171,7 +168,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
     return () => { clearInterval(iv); intervalsRef.current = []; };
   }, [isScanning]);
 
-  // ── Derived values — only recompute when box dimensions change ──
   const topoLines = useMemo(() => {
     if (box.width === 0) return [];
     const { width: w, height: h } = box;
@@ -188,7 +184,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
       cx: rx * box.width,
       cy: ry * box.height,
     }));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [box.width, box.height]);
 
   const ghostPositions = useMemo(() => {
@@ -230,7 +225,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
           </radialGradient>
         </defs>
 
-        {/* Topographic contour lines */}
         <g clipPath="url(#face-clip)">
           {topoLines.map((line, i) => (
             <motion.path
@@ -246,7 +240,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
           ))}
         </g>
 
-        {/* Corner brackets */}
         {([
           { x: 0,     y: 0,      dh:  1, dv:  1 },
           { x: width, y: 0,      dh: -1, dv:  1 },
@@ -265,7 +258,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
           </motion.g>
         ))}
 
-        {/* Roaming lens flare */}
         {isScanning && (
           <motion.ellipse
             cx={width * 0.5} cy={height * 0.3}
@@ -280,7 +272,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
           />
         )}
 
-        {/* Data nodes */}
         {landmarks.slice(0, nodeCount).map(({ cx, cy }, i) => (
           <motion.g key={i}
             initial={{ opacity: 0, scale: 0 }}
@@ -298,7 +289,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
         ))}
       </svg>
 
-      {/* Ghost data feed */}
       {isScanning && GHOST_ITEMS.map((item, i) => {
         const pos = ghostPositions[i % ghostPositions.length];
         if (!pos) return null;
@@ -336,7 +326,6 @@ const FaceScanOverlay = memo(function FaceScanOverlay({
         );
       })}
 
-      {/* Progress counter */}
       {isScanning && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -399,7 +388,11 @@ const CardModal = memo(function CardModal({
           />
           <motion.div
             className="fixed z-[101] left-1/2 top-1/2"
-            style={{ width: card === "face" ? 480 : 440, maxHeight: "88vh", overflowY: "auto" }}
+            style={{
+              width: `min(92vw, ${card === "face" ? "480px" : "440px"})`,
+              maxHeight: "88vh",
+              overflowY: "auto",
+            }}
             initial={{ opacity: 0, scale: 0.90, x: "-50%", y: "-44%" }}
             animate={{ opacity: 1, scale: 1,    x: "-50%", y: "-50%" }}
             exit={{   opacity: 0, scale: 0.95,  x: "-50%", y: "-48%" }}
@@ -778,6 +771,7 @@ const GlowScoreCard = memo(function GlowScoreCard({
 }: { isRevealed: boolean; onClick: () => void; entryDelay: number }) {
   return (
     <motion.div
+      initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: isRevealed ? 1 : 0, x: isRevealed ? 0 : 16 }}
       whileHover={{ scale: 1.03, y: -3 }}
       whileTap={{ scale: 0.98 }}
@@ -808,6 +802,7 @@ const GlowScoreCard = memo(function GlowScoreCard({
       </div>
       <div className="h-[3px] bg-slate-100 rounded-full overflow-hidden">
         <motion.div
+          initial={{ width: "0%" }}
           animate={{ width: isRevealed ? "92%" : "0%" }}
           transition={{ delay: entryDelay + 0.4, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
           className="h-full rounded-full"
@@ -823,6 +818,7 @@ const FaceAnalysisCard = memo(function FaceAnalysisCard({
 }: { isRevealed: boolean; onClick: () => void; entryDelay: number }) {
   return (
     <motion.div
+      initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: isRevealed ? 1 : 0, x: isRevealed ? 0 : 16 }}
       whileHover={{ scale: 1.03, y: -3 }}
       whileTap={{ scale: 0.98 }}
@@ -847,6 +843,7 @@ const FaceAnalysisCard = memo(function FaceAnalysisCard({
       <div className="flex flex-col gap-2.5">
         {([["Face Shape","Oval"],["Undertone","Warm"],["Skin Type","Combination"]] as const).map(([label, value], i) => (
           <motion.div key={label} className="flex justify-between items-center"
+            initial={{ opacity: 0, x: 6 }}
             animate={{ opacity: isRevealed ? 1 : 0, x: isRevealed ? 0 : 6 }}
             transition={{ delay: entryDelay + 0.1 + i * 0.1, duration: 0.7 }}
           >
@@ -864,6 +861,7 @@ const RoutineCard = memo(function RoutineCard({
 }: { isRevealed: boolean; onClick: () => void; entryDelay: number }) {
   return (
     <motion.div
+      initial={{ opacity: 0, x: 16 }}
       animate={{ opacity: isRevealed ? 1 : 0, x: isRevealed ? 0 : 16 }}
       whileHover={{ scale: 1.03, y: -3 }}
       whileTap={{ scale: 0.98 }}
@@ -888,6 +886,7 @@ const RoutineCard = memo(function RoutineCard({
       <div className="flex flex-col gap-2">
         {["Morning skincare","Evening routine","Makeup tips"].map((item, i) => (
           <motion.div key={item}
+            initial={{ opacity: 0, x: 6 }}
             animate={{ opacity: isRevealed ? 1 : 0, x: isRevealed ? 0 : 6 }}
             transition={{ delay: entryDelay + 0.1 + i * 0.1, duration: 0.7 }}
             className="flex items-center gap-2.5"
@@ -907,9 +906,12 @@ const RoutineCard = memo(function RoutineCard({
 // ─────────────────────────────────────────
 // HERO
 // ─────────────────────────────────────────
-export default function Hero() {
+type HeroProps = {
+  phase: IntroPhase;
+};
+
+export default function Hero({ phase }: HeroProps) {
   const ref = useRef<HTMLElement>(null);
-  const [phase, setPhase]         = useState<"hidden" | "scanning" | "revealed">("hidden");
   const [email, setEmail]         = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading]     = useState(false);
@@ -923,20 +925,8 @@ export default function Hero() {
   const cardsY   = useTransform(smooth, [0, 1], ["0%", "12%"]);
   const opacity  = useTransform(smooth, [0, 0.55], [1, 0]);
 
-  useEffect(() => {
-    const t1 = setTimeout(() => setPhase("scanning"), 600);
-    const t2 = setTimeout(() => setPhase("revealed"), 5000);
-    return () => { clearTimeout(t1); clearTimeout(t2); };
-  }, []);
-
   const isRevealed = phase === "revealed";
   const isScanning = phase === "scanning";
-
-  // Sync body data attribute so Nav knows when to appear
-  useEffect(() => {
-    document.body.setAttribute("data-hero-phase", phase);
-    // Don't remove on cleanup — Nav needs to read "revealed" after mount
-  }, [phase]);
 
   const handleSubmit = useCallback(async () => {
     if (!email.includes("@")) {
@@ -962,6 +952,7 @@ export default function Hero() {
       setLoading(false);
     }
   }, [email]);
+
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => { if (e.key === "Enter") handleSubmit(); }, [handleSubmit]);
   const closeCard     = useCallback(() => setOpenCard(null), []);
   const openGlow      = useCallback(() => setOpenCard("glow"),    []);
@@ -1021,169 +1012,198 @@ export default function Hero() {
       </AnimatePresence>
 
       {/* Warm glow */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse 38% 48% at 62% 36%, rgba(249,168,201,0.18) 0%, transparent 70%)",
-          zIndex: 3,
-        }}
-        animate={{ opacity: isRevealed ? 1 : 0 }}
-        transition={{ duration: 2.5, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      />
+      {isRevealed && (
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse 38% 48% at 62% 36%, rgba(249,168,201,0.18) 0%, transparent 70%)",
+            zIndex: 3,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2.5, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        />
+      )}
 
       {/* Permanent overlays */}
       <div className="absolute inset-0 pointer-events-none" style={{ zIndex:4, background:"linear-gradient(to right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.25) 45%, transparent 65%)" }} />
       <div className="absolute inset-0 pointer-events-none" style={{ zIndex:4, background:"linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 40%)" }} />
 
       {/* ── LEFT — Waitlist content ── */}
-      <motion.div
-        style={{ y: contentY, opacity, zIndex: 20 }}
-        className="absolute bottom-0 left-0 px-10 pb-16 md:px-20 md:pb-24 max-w-[560px]"
-      >
+      {/* MOBILE FIX: w-full + tighter padding on mobile, wider on sm+, capped on md+ */}
+      {isRevealed && (
         <motion.div
-          animate={{ opacity: isRevealed ? 1 : 0, y: isRevealed ? 0 : 6 }}
-          transition={{ duration: 1.0, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="inline-flex items-center gap-2 mb-6"
+          style={{ y: contentY, opacity, zIndex: 20 }}
+          className="absolute bottom-0 left-0 w-full px-6 pb-10 sm:px-10 sm:pb-16 md:px-20 md:pb-24 md:max-w-[560px]"
         >
-          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-3.5 py-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-[10px] font-medium tracking-[0.2em] text-white/70 uppercase">Waitlist open</span>
-          </div>
-        </motion.div>
-
-        <div className="overflow-hidden mb-1">
-          <motion.h1
-            animate={{ y: isRevealed ? 0 : "105%" }}
-            transition={{ duration: 1.4, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[52px] md:text-[68px] font-light text-white leading-[0.92] tracking-[-0.02em]"
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.0, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="inline-flex items-center gap-2 mb-6"
           >
-            Glow-up that starts
-          </motion.h1>
-        </div>
-        <div className="overflow-hidden mb-7">
-          <motion.h1
-            animate={{ y: isRevealed ? 0 : "105%" }}
-            transition={{ duration: 1.4, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
-            className="text-[52px] md:text-[68px] font-light text-white leading-[0.92] tracking-[-0.02em]"
-          >
-            with <span className="italic" style={{ color: "#F9A8C9" }}>you.</span>
-          </motion.h1>
-        </div>
-
-        <motion.div
-          animate={{ opacity: isRevealed ? 1 : 0, y: isRevealed ? 0 : 8 }}
-          transition={{ delay: 1.0, duration: 1.1 }}
-          className="flex flex-col gap-2 mb-8"
-        >
-          {[
-            "Upload a photo. Get your glow score in 10 seconds.",
-            "AI reads your face shape, undertone, and skin — not a quiz.",
-            "A personalised beauty routine built only for you.",
-          ].map((line, i) => (
-            <div key={i} className="flex items-start gap-2.5">
-              <div className="w-1 h-1 rounded-full mt-[7px] flex-shrink-0" style={{ background: "#F9A8C9" }} />
-              <p className="text-[13px] font-light text-white/50 leading-[1.6]">{line}</p>
+            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-3.5 py-1.5">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[10px] font-medium tracking-[0.2em] text-white/70 uppercase">Waitlist open</span>
             </div>
-          ))}
-        </motion.div>
+          </motion.div>
 
-        <motion.div
-          animate={{ opacity: isRevealed ? 1 : 0, y: isRevealed ? 0 : 8 }}
-          transition={{ delay: 1.15, duration: 1.1 }}
-        >
-          {!submitted ? (
-            <div className="flex flex-col gap-3">
-              {/* Email + CTA row */}
-              <div className="flex gap-2">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Enter your email"
-                  className="flex-1 min-w-0 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-5 py-3.5 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-white/40 transition-all duration-200"
-                />
-                <motion.button
-                  onClick={handleSubmit}
-                  disabled={loading}
-                  whileHover={{ scale: loading ? 1 : 1.02 }}
-                  whileTap={{ scale: loading ? 1 : 0.97 }}
-                  className="bg-white text-slate-900 font-semibold text-[13px] px-6 py-3.5 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.25)] whitespace-nowrap flex-shrink-0 disabled:opacity-60 transition-opacity"
-                >
-                  {loading ? "Reserving…" : "Reserve my spot →"}
-                </motion.button>
-              </div>
-
-              <div className="flex items-center gap-2 pl-1">
-                <div className="h-1 w-16 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full rounded-full" style={{ width:"73%", background:"linear-gradient(90deg, #F9A8C9, #f472b6)" }} />
-                </div>
-                <p className="text-[11px] font-light text-white/35">
-                  <span className="text-white/60">364 spots</span> left of 500 · Free at launch
-                </p>
-              </div>
-            </div>
-          ) : (
-            <motion.div
-              initial={{ opacity:0, scale:0.97 }} animate={{ opacity:1, scale:1 }}
-              className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-5 py-3.5"
+          {/* MOBILE FIX: headline scales down on mobile */}
+          <div className="overflow-hidden mb-1">
+            <motion.h1
+              initial={{ y: "105%" }}
+              animate={{ y: 0 }}
+              transition={{ duration: 1.4, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="text-[38px] sm:text-[52px] md:text-[68px] font-light text-white leading-[0.92] tracking-[-0.02em]"
             >
-              <div className="w-5 h-5 rounded-full bg-emerald-400/20 flex items-center justify-center flex-shrink-0">
-                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-                  <path d="M1 4L3.5 6.5L9 1" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </div>
-              <p className="text-[13px] font-light text-white/80">
-                You're on the list. We'll reach out before anyone else.
-              </p>
-            </motion.div>
-          )}
-        </motion.div>
-
-        <motion.div
-          animate={{ opacity: isRevealed ? 1 : 0 }}
-          transition={{ delay: 1.4, duration: 1.0 }}
-          className="flex items-center gap-3 mt-5"
-        >
-          <div className="flex -space-x-1.5">
-            {["#e8b4c8","#d4a0b8","#f0c4d4","#c8a0b4","#ead0c0"].map((bg, i) => (
-              <div key={i} className="w-5 h-5 rounded-full border border-white/20 flex-shrink-0"
-                style={{ background:`radial-gradient(circle at 35% 35%, ${bg}, ${bg}99)` }} />
-            ))}
+              Glow-up that starts
+            </motion.h1>
           </div>
-          <p className="text-[11px] font-light text-white/35">
-            <span className="text-white/55 font-normal">2,847 women</span> already waiting
-          </p>
-        </motion.div>
-      </motion.div>
+          <div className="overflow-hidden mb-7">
+            <motion.h1
+              initial={{ y: "105%" }}
+              animate={{ y: 0 }}
+              transition={{ duration: 1.4, delay: 0.85, ease: [0.16, 1, 0.3, 1] }}
+              className="text-[38px] sm:text-[52px] md:text-[68px] font-light text-white leading-[0.92] tracking-[-0.02em]"
+            >
+              with <span className="italic" style={{ color: "#F9A8C9" }}>you.</span>
+            </motion.h1>
+          </div>
 
-      {/* ── RIGHT — Cards ── */}
-      <motion.div
-        style={{ y: cardsY, opacity, zIndex: 20 }}
-        className="absolute top-1/2 right-8 md:right-14 -translate-y-[54%] hidden md:flex flex-col gap-3 w-[258px]"
-      >
-        <GlowScoreCard    isRevealed={isRevealed} onClick={openGlow}    entryDelay={0.9} />
-        <FaceAnalysisCard isRevealed={isRevealed} onClick={openFace}    entryDelay={1.1} />
-        <RoutineCard      isRevealed={isRevealed} onClick={openRoutine} entryDelay={1.3} />
-      </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0, duration: 1.1 }}
+            className="flex flex-col gap-2 mb-8"
+          >
+            {[
+              "Upload a photo. Get your glow score in 10 seconds.",
+              "AI reads your face shape, undertone, and skin — not a quiz.",
+              "A personalised beauty routine built only for you.",
+            ].map((line, i) => (
+              <div key={i} className="flex items-start gap-2.5">
+                <div className="w-1 h-1 rounded-full mt-[7px] flex-shrink-0" style={{ background: "#F9A8C9" }} />
+                <p className="text-[13px] font-light text-white/50 leading-[1.6]">{line}</p>
+              </div>
+            ))}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.15, duration: 1.1 }}
+          >
+            {!submitted ? (
+              <div className="flex flex-col gap-3">
+                {/* MOBILE FIX: stacked on mobile, side-by-side on sm+ */}
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="Enter your email"
+                    className="w-full sm:flex-1 sm:min-w-0 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-5 py-3.5 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-white/40 transition-all duration-200"
+                  />
+                  <motion.button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    whileHover={{ scale: loading ? 1 : 1.02 }}
+                    whileTap={{ scale: loading ? 1 : 0.97 }}
+                    className="w-full sm:w-auto bg-white text-slate-900 font-semibold text-[13px] px-6 py-3.5 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.25)] whitespace-nowrap flex-shrink-0 disabled:opacity-60 transition-opacity"
+                  >
+                    {loading ? "Reserving…" : "Reserve my spot →"}
+                  </motion.button>
+                </div>
+
+                {error && (
+                  <p className="text-[11px] text-red-400 pl-1">{error}</p>
+                )}
+
+                <div className="flex items-center gap-2 pl-1">
+                  <div className="h-1 w-16 bg-white/10 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width:"73%", background:"linear-gradient(90deg, #F9A8C9, #f472b6)" }} />
+                  </div>
+                  <p className="text-[11px] font-light text-white/35">
+                    <span className="text-white/60">364 spots</span> left of 500 · Free at launch
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <motion.div
+                initial={{ opacity:0, scale:0.97 }} animate={{ opacity:1, scale:1 }}
+                className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-5 py-3.5"
+              >
+                <div className="w-5 h-5 rounded-full bg-emerald-400/20 flex items-center justify-center flex-shrink-0">
+                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                    <path d="M1 4L3.5 6.5L9 1" stroke="#34d399" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
+                <p className="text-[13px] font-light text-white/80">
+                  You&apos;re on the list. We&apos;ll reach out before anyone else.
+                </p>
+              </motion.div>
+            )}
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.4, duration: 1.0 }}
+            className="flex items-center gap-3 mt-5"
+          >
+            <div className="flex -space-x-1.5">
+              {["#e8b4c8","#d4a0b8","#f0c4d4","#c8a0b4","#ead0c0"].map((bg, i) => (
+                <div key={i} className="w-5 h-5 rounded-full border border-white/20 flex-shrink-0"
+                  style={{ background:`radial-gradient(circle at 35% 35%, ${bg}, ${bg}99)` }} />
+              ))}
+            </div>
+            <p className="text-[11px] font-light text-white/35">
+              <span className="text-white/55 font-normal">2,847 women</span> already waiting
+            </p>
+          </motion.div>
+        </motion.div>
+      )}
+
+      {/* ── RIGHT — Cards (desktop only) ── */}
+      {isRevealed && (
+        <motion.div
+          style={{ y: cardsY, opacity, zIndex: 20 }}
+          className="absolute top-1/2 right-8 md:right-14 -translate-y-[54%] hidden md:block w-[258px]"
+        >
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col gap-3"
+          >
+            <GlowScoreCard    isRevealed={isRevealed} onClick={openGlow}    entryDelay={0.9} />
+            <FaceAnalysisCard isRevealed={isRevealed} onClick={openFace}    entryDelay={1.1} />
+            <RoutineCard      isRevealed={isRevealed} onClick={openRoutine} entryDelay={1.3} />
+          </motion.div>
+        </motion.div>
+      )}
 
       <CardModal card={openCard} onClose={closeCard} />
 
       {/* Scroll indicator */}
-      <motion.div
-        animate={{ opacity: isRevealed ? 1 : 0 }}
-        transition={{ delay: 1.6, duration: 1.0 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        style={{ zIndex: 20 }}
-      >
-        <div className="w-px h-10 bg-white/15 relative overflow-hidden rounded-full">
-          <motion.div
-            animate={{ y: ["-100%", "100%"] }}
-            transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
-            className="w-full h-1/2 rounded-full bg-white/35"
-          />
-        </div>
-      </motion.div>
+      {isRevealed && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.6, duration: 1.0 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          style={{ zIndex: 20 }}
+        >
+          <div className="w-px h-10 bg-white/15 relative overflow-hidden rounded-full">
+            <motion.div
+              animate={{ y: ["-100%", "100%"] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: "linear" }}
+              className="w-full h-1/2 rounded-full bg-white/35"
+            />
+          </div>
+        </motion.div>
+      )}
 
     </section>
   );
