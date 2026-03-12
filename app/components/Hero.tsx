@@ -1068,10 +1068,10 @@ export default function Hero({ phase }: HeroProps) {
               transition={{ duration: 1.4, delay: 0.7, ease: [0.16, 1, 0.3, 1] }}
               className="text-[30px] sm:text-[52px] md:text-[68px] font-light text-white leading-[0.96] tracking-[-0.02em]"
             >
-              Glow-up that starts
+              Glow up that starts
             </motion.h1>
           </div>
-          <div className="overflow-hidden mb-7">
+          <div className="overflow-hidden mb-4">
             <motion.h1
               initial={{ y: "105%" }}
               animate={{ y: 0 }}
@@ -1082,6 +1082,15 @@ export default function Hero({ phase }: HeroProps) {
             </motion.h1>
           </div>
 
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.95, duration: 1.0 }}
+            className="text-[13px] sm:text-[15px] font-light text-white/50 tracking-wide mb-6"
+          >
+            Built for girls, by girls.
+          </motion.p>
+
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1089,9 +1098,9 @@ export default function Hero({ phase }: HeroProps) {
             className="flex flex-col gap-2 mb-8"
           >
             {[
-              "Upload a photo. Get your glow score in 10 seconds.",
-              "AI reads your face shape, undertone, and skin — not a quiz.",
-              "A personalised beauty routine built only for you.",
+              "Drop a selfie. Get your Lumii Score in seconds.",
+              "Our custom machine learning model reads your face shape, undertone and skin.",
+              "Results so specific they could only be yours.",
             ].map((line, i) => (
               <div key={i} className="flex items-start gap-2.5">
                 <div className="w-1 h-1 rounded-full mt-[7px] flex-shrink-0" style={{ background: "#F9A8C9" }} />
