@@ -3,7 +3,7 @@ import "./globals.css";
 import Nav from "./components/Nav";
 
 export const metadata: Metadata = {
-  title: "lumiii — AI Beauty Advisor",
+  title: "lumii — AI Beauty Advisor",
   description: "Upload a photo. Get a beauty plan built for your actual face.",
 };
 
