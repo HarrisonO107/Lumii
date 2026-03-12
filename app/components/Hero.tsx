@@ -917,6 +917,15 @@ export default function Hero({ phase }: HeroProps) {
   const [loading, setLoading]           = useState(false);
   const [error, setError]               = useState("");
   const [openCard, setOpenCard]         = useState<"glow" | "face" | "routine" | null>(null);
+  const [waitlistCount, setWaitlistCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/waitlist")
+      .then((r) => r.json())
+      .then((d) => { if (typeof d.count === "number") setWaitlistCount(d.count); })
+      .catch(() => {});
+  }, []);
+
   // ── iOS KEYBOARD FIX ─────────────────────────────────────────────────────
   // When the keyboard opens on iOS it resizes the viewport, which fires a
   // scroll event and trips the parallax transforms — pushing everything off
@@ -1053,7 +1062,7 @@ export default function Hero({ phase }: HeroProps) {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.0, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="inline-flex items-center gap-2 mb-6"
+            className="inline-flex items-center gap-2 mb-8"
           >
             <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-3.5 py-1.5">
               <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -1071,7 +1080,7 @@ export default function Hero({ phase }: HeroProps) {
               Glow up that starts
             </motion.h1>
           </div>
-          <div className="overflow-hidden mb-4">
+          <div className="overflow-hidden mb-6">
             <motion.h1
               initial={{ y: "105%" }}
               animate={{ y: 0 }}
@@ -1086,25 +1095,28 @@ export default function Hero({ phase }: HeroProps) {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.95, duration: 1.0 }}
-            className="text-[13px] sm:text-[15px] font-light text-white/50 tracking-wide mb-6"
+            className="text-[10px] sm:text-[11px] font-light text-white/50 tracking-[0.2em] uppercase mb-6"
           >
             Built for girls, by girls.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0, duration: 1.1 }}
-            className="flex flex-col gap-2 mb-8"
+            transition={{ delay: 1.0, duration: 1.0 }}
+            className="flex flex-col gap-3 mb-8"
           >
             {[
               "Drop a selfie. Get your Lumii Score in seconds.",
-              "Our custom machine learning model reads your face shape, undertone and skin.",
+              "Reads your face shape, undertone and skin type.",
               "Results so specific they could only be yours.",
             ].map((line, i) => (
-              <div key={i} className="flex items-start gap-2.5">
-                <div className="w-1 h-1 rounded-full mt-[7px] flex-shrink-0" style={{ background: "#F9A8C9" }} />
-                <p className="text-[12px] sm:text-[13px] font-light text-white/50 leading-[1.6]">{line}</p>
+              <div key={i} className="flex items-center gap-3">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="flex-shrink-0">
+                  <circle cx="5" cy="5" r="4" stroke="rgba(249,168,201,0.5)" strokeWidth="1" />
+                  <circle cx="5" cy="5" r="1.5" fill="rgba(249,168,201,0.6)" />
+                </svg>
+                <p className="text-[11px] sm:text-[12px] font-light text-white/80 leading-relaxed tracking-[0.04em]">{line}</p>
               </div>
             ))}
           </motion.div>
@@ -1115,8 +1127,24 @@ export default function Hero({ phase }: HeroProps) {
             transition={{ delay: 1.15, duration: 1.1 }}
           >
             {!submitted ? (
-              <div className="flex flex-col gap-3">
-                <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex flex-col gap-2.5">
+                {/* Label above input */}
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[9px] font-medium tracking-[0.22em] text-white/50 uppercase">Founding Member Access · Free at launch</span>
+                </div>
+
+                {/* Glassmorphic input */}
+                <div
+                  style={{
+                    background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(255,255,255,0.15)",
+                    borderRadius: 14,
+                    backdropFilter: "blur(28px)",
+                    WebkitBackdropFilter: "blur(28px)",
+                    overflow: "hidden",
+                  }}
+                >
                   <input
                     type="email"
                     value={email}
@@ -1124,37 +1152,37 @@ export default function Hero({ phase }: HeroProps) {
                     onKeyDown={handleKeyDown}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
-                    placeholder="Enter your email"
-                    className="w-full sm:flex-1 sm:min-w-0 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-5 py-3.5 text-[13px] text-white placeholder:text-white/30 outline-none focus:border-white/40 transition-all duration-200"
+                    placeholder="Enter your email for early access"
+                    className="w-full bg-transparent px-5 pt-4 pb-3 text-[13px] text-white placeholder:text-white/30 outline-none"
                   />
+                  <div style={{ height: "1px", background: "rgba(255,255,255,0.10)", margin: "0 20px" }} />
                   <motion.button
                     onClick={handleSubmit}
                     disabled={loading}
-                    whileHover={{ scale: loading ? 1 : 1.02 }}
-                    whileTap={{ scale: loading ? 1 : 0.97 }}
-                    className="w-full sm:w-auto bg-white text-slate-900 font-semibold text-[13px] px-6 py-3.5 rounded-full shadow-[0_8px_32px_rgba(0,0,0,0.25)] whitespace-nowrap flex-shrink-0 disabled:opacity-60 transition-opacity"
+                    whileHover={{ opacity: loading ? 0.6 : 0.88 }}
+                    whileTap={{ scale: loading ? 1 : 0.98 }}
+                    className="w-full font-semibold text-[13px] px-5 py-3.5 text-left disabled:opacity-50 text-white flex items-center justify-between"
+                    style={{ background: "transparent" }}
                   >
-                    {loading ? "Reserving…" : "Reserve my spot →"}
+                    <span>{loading ? "Reserving…" : "Claim my founding spot"}</span>
+                    <span style={{ color: "#f472b6", fontSize: 18, lineHeight: 1 }}>→</span>
                   </motion.button>
                 </div>
 
                 {error && (
                   <p className="text-[11px] text-red-400 pl-1">{error}</p>
                 )}
-
-                <div className="flex items-center gap-2 pl-1">
-                  <div className="h-1 w-16 bg-white/10 rounded-full overflow-hidden">
-                    <div className="h-full rounded-full" style={{ width:"73%", background:"linear-gradient(90deg, #F9A8C9, #f472b6)" }} />
-                  </div>
-                  <p className="text-[11px] font-light text-white/35">
-                    <span className="text-white/60">364 spots</span> left of 500 · Free at launch
-                  </p>
-                </div>
               </div>
             ) : (
               <motion.div
                 initial={{ opacity:0, scale:0.97 }} animate={{ opacity:1, scale:1 }}
-                className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/15 rounded-full px-5 py-3.5"
+                className="flex items-center gap-3 px-5 py-4"
+                style={{
+                  background: "rgba(8,4,10,0.5)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  borderRadius: 14,
+                  backdropFilter: "blur(20px)",
+                }}
               >
                 <div className="w-5 h-5 rounded-full bg-emerald-400/20 flex items-center justify-center flex-shrink-0">
                   <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
@@ -1172,16 +1200,15 @@ export default function Hero({ phase }: HeroProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.4, duration: 1.0 }}
-            className="flex items-center gap-3 mt-5"
+            className="mt-5 pt-4"
+            style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
           >
-            <div className="flex -space-x-1.5">
-              {["#e8b4c8","#d4a0b8","#f0c4d4","#c8a0b4","#ead0c0"].map((bg, i) => (
-                <div key={i} className="w-5 h-5 rounded-full border border-white/20 flex-shrink-0"
-                  style={{ background:`radial-gradient(circle at 35% 35%, ${bg}, ${bg}99)` }} />
-              ))}
-            </div>
-            <p className="text-[11px] font-light text-white/35">
-              <span className="text-white/55 font-normal">2,847 women</span> already waiting
+            <p className="text-[10px] font-light text-white/50 tracking-[0.12em]">
+              Join{" "}
+              <span className="text-white/70 font-medium tabular-nums">
+                {waitlistCount != null ? `${(Math.floor(waitlistCount / 5) * 5).toLocaleString()}+ girls` : "—"}
+              </span>
+              {" "}already in the first wave
             </p>
           </motion.div>
         </motion.div>

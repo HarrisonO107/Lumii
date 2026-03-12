@@ -7,7 +7,24 @@ const supabase = createClient(
   process.env.SUPABASE_ANON_KEY!
 );
 
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function GET() {
+  const { count, error } = await supabaseAdmin
+    .from("Waitlist")
+    .select("*", { count: "exact", head: true });
+
+  if (error) {
+    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+  }
+
+  return NextResponse.json({ count: count ?? 0 });
+}
 
 export async function POST(req: Request) {
   try {
