@@ -28,19 +28,21 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json();
+    const { email, ref } = await req.json();
 
     if (!email || !email.includes("@")) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
 
-    // Insert into Supabase
+    // Insert into Supabase with referral source
     const { error: dbError } = await supabase
       .from("Waitlist")
-      .insert([{ email }]);
+      .insert([{ 
+        email,
+        refferal_source: ref || null,
+      }]);
 
     if (dbError) {
-      // Duplicate email — succeed silently
       if (dbError.code === "23505") {
         return NextResponse.json({ success: true });
       }
@@ -48,7 +50,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
     }
 
-    // Send confirmation email — wrapped so it never crashes the route
+    // Send confirmation email
     try {
       await resend.emails.send({
         from: "Lumii <hello@lumiiapp.com>",
@@ -70,12 +72,10 @@ export async function POST(req: Request) {
         `,
       });
     } catch (emailErr) {
-      // Email failure is non-fatal — log it but don't block the signup
       console.error("Resend error:", emailErr);
     }
 
     return NextResponse.json({ success: true });
-
   } catch (err) {
     console.error("Unexpected error:", err);
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 });

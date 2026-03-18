@@ -918,6 +918,13 @@ export default function Hero({ phase }: HeroProps) {
   const [error, setError]               = useState("");
   const [openCard, setOpenCard]         = useState<"glow" | "face" | "routine" | null>(null);
   const [waitlistCount, setWaitlistCount] = useState<number | null>(null);
+  const [refCode, setRefCode] = useState<string | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const r = params.get('ref');
+    if (r) setRefCode(r);
+  }, []);
 
   useEffect(() => {
     fetch("/api/waitlist")
@@ -954,7 +961,7 @@ export default function Hero({ phase }: HeroProps) {
       const res = await fetch("/api/waitlist", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, ref: refCode }),
       });
       if (res.ok) {
         setSubmitted(true);
@@ -966,7 +973,7 @@ export default function Hero({ phase }: HeroProps) {
     } finally {
       setLoading(false);
     }
-  }, [email]);
+  }, [email, refCode]);
 
   const handleKeyDown  = useCallback((e: React.KeyboardEvent) => { if (e.key === "Enter") handleSubmit(); }, [handleSubmit]);
   const handleFocus    = useCallback(() => setInputFocused(true),  []);
