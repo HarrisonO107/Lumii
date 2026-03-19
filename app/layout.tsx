@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Nav from "./components/Nav";
-import { Analytics } from '@vercel/analytics/react'
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
   title: "lumii — AI Beauty Advisor",
@@ -20,6 +20,7 @@ export default function RootLayout({
       >
         <Nav />
         {children}
+        <Analytics />
       </body>
     </html>
   );
