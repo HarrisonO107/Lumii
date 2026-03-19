@@ -224,7 +224,7 @@ export default function Nav() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/referrals"
-              className="text-[12px] font-semibold tracking-[0.06em] uppercase transition-all duration-200"
+              className="text-[12px] font-semibold tracking-[0.06em] transition-all duration-200"
               style={{
                 color: "#000",
                 padding: "10px 22px",
@@ -303,7 +303,7 @@ export default function Nav() {
                 <div className="mt-3 pt-3 flex flex-col gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                   <Link
                     href="/referrals"
-                    className="w-full py-3 rounded-xl text-[12px] font-semibold tracking-[0.08em] uppercase text-center"
+                    className="w-full py-3 rounded-xl text-[12px] font-semibold tracking-[0.08em] text-center"
                     style={{
                       color: "#000",
                       border: "1.5px solid rgba(255,255,255,0.8)",
