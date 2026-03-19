@@ -113,6 +113,7 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
 const NAV_LINKS = [
   { label: "HOW IT WORKS", href: "/how-it-works" },
   { label: "FEATURES",     href: "/features" },
+  { label: "INVITE & EARN", href: "/referrals" },
   { label: "FAQ",          href: "/faq" },
   { label: "CONTACT",      href: "/contact" },
 ];

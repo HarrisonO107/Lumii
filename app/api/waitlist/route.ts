@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     // Insert into Supabase with referral source
     const { error: dbError } = await supabase
       .from("Waitlist")
-      .insert([{ 
+      .insert([{
         email,
         refferal_source: ref || null,
       }]);
@@ -48,6 +48,22 @@ export async function POST(req: Request) {
       }
       console.error("Supabase error:", dbError);
       return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
+    }
+
+    // Award referral points if ref code matches a referrer
+    if (ref) {
+      const { data: referrer } = await supabaseAdmin
+        .from("Referrers")
+        .select("id, points")
+        .eq("referral_code", ref)
+        .single();
+
+      if (referrer) {
+        await supabaseAdmin
+          .from("Referrers")
+          .update({ points: (referrer.points ?? 0) + 10 })
+          .eq("id", referrer.id);
+      }
     }
 
     // Send confirmation email
