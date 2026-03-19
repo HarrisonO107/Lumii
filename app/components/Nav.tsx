@@ -226,19 +226,19 @@ export default function Nav() {
               href="/referrals"
               className="text-[11px] font-semibold tracking-[0.08em] uppercase transition-all duration-200"
               style={{
-                color: pathname === "/referrals" ? "#F9A8C9" : "#F9A8C9",
+                color: "#fff",
                 padding: "8px 18px",
                 borderRadius: 100,
-                border: "1px solid rgba(249,168,201,0.35)",
-                background: "rgba(249,168,201,0.06)",
+                border: "1px solid rgba(255,255,255,0.45)",
+                background: "rgba(255,255,255,0.10)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(249,168,201,0.12)";
-                e.currentTarget.style.borderColor = "rgba(249,168,201,0.55)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.18)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.65)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(249,168,201,0.06)";
-                e.currentTarget.style.borderColor = "rgba(249,168,201,0.35)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.10)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.45)";
               }}
             >
               Invite &amp; Earn
@@ -305,9 +305,9 @@ export default function Nav() {
                     href="/referrals"
                     className="w-full py-3 rounded-xl text-[12px] font-semibold tracking-[0.08em] uppercase text-center"
                     style={{
-                      color: "#F9A8C9",
-                      border: "1px solid rgba(249,168,201,0.35)",
-                      background: "rgba(249,168,201,0.06)",
+                      color: "#fff",
+                      border: "1px solid rgba(255,255,255,0.45)",
+                      background: "rgba(255,255,255,0.10)",
                     }}
                   >
                     Invite &amp; Earn
