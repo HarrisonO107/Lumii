@@ -224,20 +224,20 @@ export default function Nav() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/referrals"
-              className="text-[11px] font-semibold tracking-[0.08em] uppercase transition-all duration-200"
+              className="text-[12px] font-semibold tracking-[0.06em] uppercase transition-all duration-200"
               style={{
                 color: "#fff",
-                padding: "8px 18px",
+                padding: "10px 22px",
                 borderRadius: 100,
                 border: "1.5px solid rgba(255,255,255,0.8)",
-                background: "rgba(255,255,255,0.25)",
+                background: "rgba(255,255,255,0.15)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.35)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.25)";
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.95)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.25)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.15)";
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.8)";
               }}
             >
