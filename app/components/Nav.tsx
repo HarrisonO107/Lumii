@@ -229,16 +229,16 @@ export default function Nav() {
                 color: "#fff",
                 padding: "8px 18px",
                 borderRadius: 100,
-                border: "1px solid rgba(255,255,255,0.45)",
-                background: "rgba(255,255,255,0.10)",
+                border: "1.5px solid rgba(255,255,255,0.8)",
+                background: "rgba(255,255,255,0.25)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.18)";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.65)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.35)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.95)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.10)";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.45)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.25)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.8)";
               }}
             >
               Invite &amp; Earn
@@ -306,8 +306,8 @@ export default function Nav() {
                     className="w-full py-3 rounded-xl text-[12px] font-semibold tracking-[0.08em] uppercase text-center"
                     style={{
                       color: "#fff",
-                      border: "1px solid rgba(255,255,255,0.45)",
-                      background: "rgba(255,255,255,0.10)",
+                      border: "1.5px solid rgba(255,255,255,0.8)",
+                      background: "rgba(255,255,255,0.25)",
                     }}
                   >
                     Invite &amp; Earn
