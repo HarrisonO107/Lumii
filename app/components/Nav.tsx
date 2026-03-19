@@ -226,18 +226,18 @@ export default function Nav() {
               href="/referrals"
               className="text-[12px] font-semibold tracking-[0.06em] uppercase transition-all duration-200"
               style={{
-                color: "#fff",
+                color: "#000",
                 padding: "10px 22px",
                 borderRadius: 100,
                 border: "1.5px solid rgba(255,255,255,0.8)",
-                background: "rgba(255,255,255,0.15)",
+                background: "#fff",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.25)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.85)";
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.95)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+                e.currentTarget.style.background = "#fff";
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.8)";
               }}
             >
@@ -305,9 +305,9 @@ export default function Nav() {
                     href="/referrals"
                     className="w-full py-3 rounded-xl text-[12px] font-semibold tracking-[0.08em] uppercase text-center"
                     style={{
-                      color: "#fff",
+                      color: "#000",
                       border: "1.5px solid rgba(255,255,255,0.8)",
-                      background: "rgba(255,255,255,0.25)",
+                      background: "#fff",
                     }}
                   >
                     Invite &amp; Earn
