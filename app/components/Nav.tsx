@@ -113,7 +113,6 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
 const NAV_LINKS = [
   { label: "HOW IT WORKS", href: "/how-it-works" },
   { label: "FEATURES",     href: "/features" },
-  { label: "INVITE & EARN", href: "/referrals" },
   { label: "FAQ",          href: "/faq" },
   { label: "CONTACT",      href: "/contact" },
 ];
@@ -221,8 +220,29 @@ export default function Nav() {
             })}
           </div>
 
-          {/* Desktop CTA — solid white pill with dark text, matching live site */}
-          <div className="hidden md:flex">
+          {/* Desktop CTAs */}
+          <div className="hidden md:flex items-center gap-3">
+            <Link
+              href="/referrals"
+              className="text-[11px] font-semibold tracking-[0.08em] uppercase transition-all duration-200"
+              style={{
+                color: pathname === "/referrals" ? "#F9A8C9" : "#F9A8C9",
+                padding: "8px 18px",
+                borderRadius: 100,
+                border: "1px solid rgba(249,168,201,0.35)",
+                background: "rgba(249,168,201,0.06)",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(249,168,201,0.12)";
+                e.currentTarget.style.borderColor = "rgba(249,168,201,0.55)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "rgba(249,168,201,0.06)";
+                e.currentTarget.style.borderColor = "rgba(249,168,201,0.35)";
+              }}
+            >
+              Invite &amp; Earn
+            </Link>
             <motion.button
               onClick={openModal}
               whileHover={{ scale: 1.02, boxShadow: "0 6px 28px rgba(0,0,0,0.35)" }}
@@ -280,7 +300,18 @@ export default function Nav() {
                     </Link>
                   );
                 })}
-                <div className="mt-3 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="mt-3 pt-3 flex flex-col gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                  <Link
+                    href="/referrals"
+                    className="w-full py-3 rounded-xl text-[12px] font-semibold tracking-[0.08em] uppercase text-center"
+                    style={{
+                      color: "#F9A8C9",
+                      border: "1px solid rgba(249,168,201,0.35)",
+                      background: "rgba(249,168,201,0.06)",
+                    }}
+                  >
+                    Invite &amp; Earn
+                  </Link>
                   <button
                     onClick={openModal}
                     className="w-full py-3 rounded-xl text-[13px] font-semibold"

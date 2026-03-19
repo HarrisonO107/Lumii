@@ -112,9 +112,15 @@ export default function ReferralsPage() {
             Invite &amp; earn.<br />
             <span className="italic" style={{ color: "#F9A8C9" }}>Get free access.</span>
           </h1>
-          <p className="text-[15px] text-white/40 font-light max-w-[480px] leading-[1.7]">
+          <p className="text-[15px] text-white/40 font-light max-w-[480px] leading-[1.7] mb-5">
             Share Lumii with friends. Earn points for every signup. Unlock free access when we launch.
           </p>
+          <div
+            className="inline-flex items-center gap-2.5 rounded-full px-5 py-2.5"
+            style={{ background: "rgba(249,168,201,0.08)", border: "1px solid rgba(249,168,201,0.2)" }}
+          >
+            <span className="text-[13px] font-medium" style={{ color: "#F9A8C9" }}>Earn 10 points for every friend who joins</span>
+          </div>
         </motion.div>
       </section>
 
@@ -124,6 +130,12 @@ export default function ReferralsPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1, ease }}
+          className="flex flex-col gap-3"
+        >
+          <p className="text-[11px] font-medium tracking-[0.05em] text-center" style={{ color: "rgba(249,168,201,0.7)" }}>
+            10 pts per referral
+          </p>
+          <div
           className="grid grid-cols-2 md:grid-cols-5 gap-3"
         >
           {TIERS.map((tier, i) => (
@@ -145,6 +157,9 @@ export default function ReferralsPage() {
               <p className="text-[10px] font-medium tracking-[0.1em] uppercase mb-1" style={{ color: data && tierIndex >= i ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.3)" }}>
                 {tier.name}
               </p>
+              <p className="text-[9px] font-light mb-0.5" style={{ color: data && tierIndex >= i ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.2)" }}>
+                {tier.referrals === 0 ? "0 referrals" : `${tier.referrals} referrals`}
+              </p>
               {tier.reward && (
                 <p className="text-[9px] font-light" style={{ color: "rgba(249,168,201,0.6)" }}>
                   {tier.reward}
@@ -152,6 +167,7 @@ export default function ReferralsPage() {
               )}
             </div>
           ))}
+          </div>
         </motion.div>
       </section>
 
