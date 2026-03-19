@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Nav from "./components/Nav";
+import { Analytics } from '@vercel/analytics/react'
 
 export const metadata: Metadata = {
   title: "lumii — AI Beauty Advisor",
