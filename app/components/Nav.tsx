@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { INTRO_REVEAL_DELAY_MS } from "../lib/intro";
 
 function WaitlistModal({ onClose }: { onClose: () => void }) {
   const [email, setEmail] = useState("");
@@ -122,7 +121,6 @@ export default function Nav() {
   const [showModal, setShowModal]   = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled]     = useState(false);
-  const [introReady, setIntroReady] = useState(pathname !== "/");
 
   const openModal  = useCallback(() => { setShowModal(true);  setMobileOpen(false); }, []);
   const closeModal = useCallback(() => setShowModal(false), []);
@@ -135,29 +133,17 @@ export default function Nav() {
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
-  useEffect(() => {
-    if (pathname !== "/") { setIntroReady(true); return; }
-    if (sessionStorage.getItem("hasSeenIntro")) { setIntroReady(true); return; }
-    setIntroReady(false);
-    const t = window.setTimeout(() => setIntroReady(true), INTRO_REVEAL_DELAY_MS);
-    return () => window.clearTimeout(t);
-  }, [pathname]);
-
   const isHome = pathname === "/";
 
   return (
     <>
-      <motion.nav
+      <nav
         className="fixed top-0 left-0 right-0 z-50"
-        animate={{ opacity: introReady ? 1 : 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        style={{ pointerEvents: introReady ? "auto" : "none" }}
       >
         {/* Main bar */}
         <div
-          className="flex items-center justify-between transition-all duration-500"
+          className="flex items-center justify-between transition-all duration-500 px-4 md:px-11"
           style={{
-            padding: "0 44px",
             height: 68,
             background: scrolled
               ? "rgba(10, 5, 14, 0.65)"
@@ -224,9 +210,12 @@ export default function Nav() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/referrals"
-              className="text-[12px] font-semibold tracking-[0.06em] transition-all duration-200"
+              className="transition-all duration-200"
               style={{
                 color: "#000",
+                fontSize: 12.5,
+                fontWeight: 600,
+                letterSpacing: "0.01em",
                 padding: "10px 22px",
                 borderRadius: 100,
                 border: "1.5px solid rgba(255,255,255,0.8)",
@@ -303,7 +292,7 @@ export default function Nav() {
                 <div className="mt-3 pt-3 flex flex-col gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
                   <Link
                     href="/referrals"
-                    className="w-full py-3 rounded-xl text-[12px] font-semibold tracking-[0.08em] text-center"
+                    className="w-full py-3 rounded-xl text-[13px] font-semibold text-center"
                     style={{
                       color: "#000",
                       border: "1.5px solid rgba(255,255,255,0.8)",
@@ -324,7 +313,7 @@ export default function Nav() {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.nav>
+      </nav>
 
       <AnimatePresence>
         {showModal && <WaitlistModal onClose={closeModal} />}

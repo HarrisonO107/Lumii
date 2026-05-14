@@ -1,34 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { INTRO_REVEAL_DELAY_MS, INTRO_SCAN_DELAY_MS, type IntroPhase } from "./lib/intro";
-import { useSmoothScroll } from "./hooks/useSmoothScroll";
+import { useState, useCallback } from "react";
+import { useLenis } from "./hooks/useLenis";
+import Preloader from "./components/Preloader";
 import Hero from "./components/Hero";
+import Sections from "./components/Sections";
 
 export default function Home() {
-  useSmoothScroll();
-  const [introPhase, setIntroPhase] = useState<IntroPhase>("hidden");
-
-  useEffect(() => {
-    if (sessionStorage.getItem("hasSeenIntro")) {
-      setIntroPhase("revealed");
-      return;
-    }
-    const scanTimer = window.setTimeout(() => setIntroPhase("scanning"), INTRO_SCAN_DELAY_MS);
-    const revealTimer = window.setTimeout(() => {
-      setIntroPhase("revealed");
-      sessionStorage.setItem("hasSeenIntro", "true");
-    }, INTRO_REVEAL_DELAY_MS);
-
-    return () => {
-      window.clearTimeout(scanTimer);
-      window.clearTimeout(revealTimer);
-    };
-  }, []);
+  useLenis();
+  const [preloaderDone, setPreloaderDone] = useState(false);
+  const handlePreloaderComplete = useCallback(() => setPreloaderDone(true), []);
 
   return (
-    <main className="relative min-h-screen w-full">
-<Hero phase={introPhase} />
-    </main>
+    <>
+      {!preloaderDone && <Preloader onComplete={handlePreloaderComplete} />}
+      <main className="relative w-full">
+        <Hero />
+        <Sections />
+      </main>
+    </>
   );
 }
