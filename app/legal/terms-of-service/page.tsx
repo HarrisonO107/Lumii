@@ -16,8 +16,8 @@ export default function TermsOfServicePage() {
           Terms of <em className="italic" style={{ color: "#F9A8C9" }}>Service.</em>
         </>
       }
-      effectiveDate="13 May 2026"
-      lastUpdated="13 May 2026"
+      effectiveDate="24 May 2026"
+      lastUpdated="24 May 2026"
       intro={
         <p>
           These Terms of Service (&quot;<strong>Terms</strong>&quot;) are a legal agreement
@@ -36,7 +36,7 @@ export default function TermsOfServicePage() {
       <h2>1. Eligibility</h2>
       <ul>
         <li>You must be at least <strong>13 years old</strong> to use Lumii.</li>
-        <li>If you are under 18, you must have the consent of a parent or legal guardian, and that parent or guardian agrees to be bound by these Terms on your behalf.</li>
+        <li>If you are between 13 and 17, you should use Lumii only with the consent of a parent or legal guardian. We do not currently operate an in-app parental-verification flow — see Section 11 of our <a href="/legal/privacy-policy">Privacy Policy</a> for how this works and how a parent or guardian can exercise rights on your behalf.</li>
         <li>You confirm that the information you provide when you sign up is accurate and that you are not barred from using the Service under any applicable law.</li>
       </ul>
       <p>We may refuse, suspend or terminate accounts that do not meet these requirements.</p>
@@ -86,24 +86,24 @@ export default function TermsOfServicePage() {
 
       <h3>4.1 You own your content</h3>
       <p>
-        You keep all rights in the photos you submit and the content you create in the App
-        (&quot;<strong>User Content</strong>&quot;). We do <strong>not</strong> claim ownership of any of it.
+        You keep all rights in the photos you submit and the content you create in the App (&quot;<strong>User Content</strong>&quot;).
+        We do <strong>not</strong> claim ownership of any of it.
       </p>
 
       <h3>4.2 Licence to us</h3>
       <p>
-        To run the App, we need a limited licence to handle your User Content. By using Lumii you grant us a{" "}
-        <strong>worldwide, non-exclusive, royalty-free licence</strong> to host, store, copy, transmit,
-        display and process your User Content solely to operate, provide and improve the Service for you.
-        This licence ends when you delete the content or your account.
+        To run the App, we need a limited licence to handle your User Content. By using Lumii you grant
+        us a <strong>worldwide, non-exclusive, royalty-free licence</strong> to host, store, copy,
+        transmit, display and process your User Content solely to operate, provide and improve the
+        Service for you. This licence ends when you delete the content or your account.
       </p>
       <p>
         We do <strong>not</strong> use your photos to train third-party AI models. We do not sell your
         photos. We do not use your photos for advertising. We do not share your photos with anyone except
-        the service providers listed in our Privacy Policy, and only where necessary to deliver the Service
-        to you. Your actual photos are processed only by our own scoring backend. Other AI services we use
-        (such as Anthropic&apos;s Claude API) receive only your scores and summary information, never the
-        photos themselves.
+        the service providers listed in our Privacy Policy, and only where necessary to deliver the
+        Service to you. Your actual photos are processed only by our own scoring backend. Other AI
+        services we use (such as Anthropic&apos;s Claude API) receive only your scores and summary
+        information, never the photos themselves.
       </p>
 
       <h3>4.3 Your warranties</h3>
@@ -127,10 +127,14 @@ export default function TermsOfServicePage() {
         <li>use bots, scrapers, automated agents or AI tools to access the Service in ways that are not part of the normal user interface;</li>
         <li>circumvent any security, rate-limit, authentication or access-control feature of the App;</li>
         <li>probe, scan or test the vulnerability of our systems without our prior written consent;</li>
-        <li>use the Service in any way that could damage, disable, overburden or impair it; or</li>
+        <li>use the Service in any way that could damage, disable, overburden or impair it;</li>
+        <li>attempt to game the referral or waitlist-code system (see Section 7.5 and 7.6), including by creating multiple accounts, using disposable email addresses or device emulators to generate referrals, or sharing your referral code in ways our anti-abuse rules prohibit; or</li>
         <li>use the Service for any unlawful purpose or in breach of these Terms.</li>
       </ul>
-      <p>We may suspend or terminate your access if we reasonably believe you have breached these rules.</p>
+      <p>
+        We may suspend or terminate your access, and we may reverse or refuse any promotional grant, if
+        we reasonably believe you have breached these rules.
+      </p>
 
       <hr />
 
@@ -151,23 +155,116 @@ export default function TermsOfServicePage() {
         <li>talk to a qualified professional if your relationship with your appearance becomes distressing.</li>
       </ul>
       <p>
-        You agree that you will not make significant cosmetic, medical, surgical or mental-health decisions
-        based solely on Lumii&apos;s outputs.
+        You agree that you will not make significant cosmetic, medical, surgical or mental-health
+        decisions based solely on Lumii&apos;s outputs.
       </p>
 
       <hr />
 
       <h2>7. Subscriptions and payments</h2>
-      <p>The App is free at launch. If we introduce paid features in future:</p>
-      <ul>
-        <li>payments will be processed by the relevant app store (Apple App Store or Google Play), under their billing terms;</li>
-        <li>subscription prices, billing periods and free-trial terms will be shown clearly before you subscribe;</li>
-        <li>you can manage and cancel subscriptions through your app-store account settings;</li>
-        <li>refunds are governed by the app store&apos;s refund policy, not by us, except where applicable law requires otherwise.</li>
-      </ul>
       <p>
-        When we add paid features we will update these Terms; your continued use after that update will
-        mean you accept the new terms.
+        Lumii offers an optional subscription called <strong>Lumii Pro</strong>, which unlocks the full
+        feature set described inside the App.
+      </p>
+
+      <h3>7.1 Pricing and renewal</h3>
+      <div className="legal-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Plan</th>
+              <th>Price (UK)</th>
+              <th>Billing</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Weekly</td>
+              <td><strong>£3.99 / week</strong></td>
+              <td>Auto-renews each week unless cancelled</td>
+            </tr>
+            <tr>
+              <td>Annual</td>
+              <td><strong>£39.99 / year</strong></td>
+              <td>Auto-renews each year unless cancelled</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Regional pricing may vary based on Apple&apos;s local pricing tiers and any taxes Apple is
+        required to collect. The exact price you will be charged is displayed inside the App before you
+        confirm the purchase.
+      </p>
+      <p>
+        Subscriptions <strong>auto-renew</strong> at the end of each billing period unless you cancel at
+        least <strong>24 hours before</strong> the end of the current period. Renewal is charged to your
+        Apple ID payment method.
+      </p>
+
+      <h3>7.2 How payment works</h3>
+      <p>
+        Payment is processed entirely by <strong>Apple In-App Purchase</strong> through the App Store.{" "}
+        <strong>Lumii never receives or stores your payment card, bank account or other financial
+        details.</strong>
+      </p>
+      <p>
+        We use <strong>RevenueCat, Inc.</strong> to verify your subscription status and apply
+        promotional grants. RevenueCat receives your Lumii user ID and an anonymous Apple subscriber
+        identifier (a randomised ID Apple gives to apps — not your Apple ID or your email). See our
+        Privacy Policy for more on RevenueCat&apos;s role.
+      </p>
+
+      <h3>7.3 Managing or cancelling your subscription</h3>
+      <p>You can manage or cancel your subscription at any time from your device:</p>
+      <ul>
+        <li><strong>iOS:</strong> Settings → tap your name at the top → Subscriptions → Lumii.</li>
+        <li><strong>inside the App:</strong> the Paywall screen has a &quot;Manage subscription&quot; link that opens the same iOS Subscriptions screen.</li>
+      </ul>
+      <p>Cancellation takes effect at the end of your current billing period. You keep Lumii Pro access until then.</p>
+
+      <h3>7.4 Refunds</h3>
+      <p>
+        Refunds are handled by <strong>Apple</strong> under the standard App Store Terms of Service. You
+        can request a refund from Apple at <strong>reportaproblem.apple.com</strong>.{" "}
+        <strong>Lumii cannot directly issue refunds for App Store purchases.</strong> Nothing in these
+        Terms gives you any in-app refund right or grace-refund window beyond what Apple offers.
+      </p>
+
+      <h3>7.5 Referrals</h3>
+      <p>
+        When you create a Lumii account, we generate a 6-character referral code unique to you. If a
+        friend signs up using your code and meets our validation rules below, you will receive a free
+        14-day promotional grant of Lumii Pro for each validated friend.
+      </p>
+      <ul>
+        <li><strong>What &quot;validated&quot; means.</strong> A referral is validated when the friend completes the in-app onboarding steps we require for a referral to count. We display the current requirements at the point of redemption — at the date of this version, this is signup and the first scan. We may change these requirements (within reason and with notice in this document) to deter fraud or abuse.</li>
+        <li><strong>Maximum banked referrals.</strong> You can bank up to <strong>12 validated referrals</strong> at a time. We may temporarily raise or lower this cap to manage promotional periods or deter abuse.</li>
+        <li><strong>Anti-abuse.</strong> We may delay, decline or reverse a referral grant if we reasonably believe the referral was generated through fraud, multiple accounts, disposable emails, device emulators, code-sharing rings or any other abuse pattern. Rejection reasons we currently apply include: self-referral, code unknown or already redeemed, the bank cap, the friend not completing a scan, suspicious device fingerprinting, and rate limits.</li>
+        <li><strong>Stacking.</strong> Promotional grants from referrals stack additively with each other and run consecutively. They do not extend or convert a paid subscription, and they do not auto-renew. When the grant period ends, your account returns to the free tier unless you have an active paid subscription.</li>
+        <li><strong>Promotional grants are not purchases.</strong> A referral grant is delivered as a <strong>promotional entitlement through RevenueCat</strong>. It is <strong>not</strong> an Apple In-App Purchase, you are <strong>not charged</strong>, and your Apple ID is not billed.</li>
+        <li><strong>We can change or end the referral program</strong> at any time with reasonable notice through the App or by email. Banked grants that have already been validated will be honoured.</li>
+      </ul>
+
+      <h3>7.6 Waitlist founding-member codes</h3>
+      <p>
+        A limited number of LUMI-XXXX codes were distributed to our pre-launch waitlist. Each code is{" "}
+        <strong>single-use</strong> and grants the redeemer a fixed-duration promotional entitlement to
+        Lumii Pro. Once a code is redeemed, it cannot be redeemed again. We may decline a code that has
+        been redeemed, that is suspected to have been improperly distributed, or that was issued in
+        error.
+      </p>
+      <p>
+        Waitlist codes are also promotional entitlements delivered through RevenueCat — they are not
+        Apple In-App Purchases and do not charge you.
+      </p>
+
+      <h3>7.7 Changes to pricing or plans</h3>
+      <p>
+        We may change Lumii Pro pricing, plans or features. If a change increases the recurring price you
+        pay, we will give you reasonable notice (through the App and / or by email) before the next
+        renewal so you can cancel if you wish. Apple may require its own confirmation of price increases
+        under App Store rules.
       </p>
 
       <hr />
@@ -180,9 +277,9 @@ export default function TermsOfServicePage() {
         intellectual-property laws.
       </p>
       <p>
-        We grant you a{" "}
-        <strong>personal, revocable, non-transferable, non-exclusive licence</strong> to use the App for
-        your own personal, non-commercial use, in accordance with these Terms. Nothing else is granted.
+        We grant you a <strong>personal, revocable, non-transferable, non-exclusive licence</strong> to
+        use the App for your own personal, non-commercial use, in accordance with these Terms. Nothing
+        else is granted.
       </p>
       <p>
         You may not reproduce, distribute, publicly display, create derivative works of or commercially
@@ -193,9 +290,9 @@ export default function TermsOfServicePage() {
 
       <h2>9. Third-party services</h2>
       <p>
-        The App relies on third-party services (listed in our Privacy Policy) to operate. Your use of those
-        services through Lumii is also subject to their own terms. We are not responsible for the acts,
-        omissions or content of third parties, and we make no warranties about their services.
+        The App relies on third-party services (listed in our Privacy Policy) to operate. Your use of
+        those services through Lumii is also subject to their own terms. We are not responsible for the
+        acts, omissions or content of third parties, and we make no warranties about their services.
       </p>
       <p>
         The App may include links to third-party websites or videos (for example, YouTube tutorials).
@@ -244,9 +341,9 @@ export default function TermsOfServicePage() {
 
       <h2>12. Indemnity</h2>
       <p>
-        To the maximum extent permitted by law, you agree to indemnify and hold harmless Lumii, its owners,
-        employees, contractors and agents from and against any claim, liability, loss or expense (including
-        reasonable legal fees) arising out of:
+        To the maximum extent permitted by law, you agree to indemnify and hold harmless Lumii, its
+        owners, employees, contractors and agents from and against any claim, liability, loss or expense
+        (including reasonable legal fees) arising out of:
       </p>
       <ul>
         <li>your breach of these Terms;</li>
@@ -319,10 +416,7 @@ export default function TermsOfServicePage() {
       <h2>17. App-store specific terms</h2>
 
       <h3>17.1 Apple App Store</h3>
-      <p>
-        If you downloaded Lumii from the Apple App Store, the following also applies, and you acknowledge
-        that:
-      </p>
+      <p>If you downloaded Lumii from the Apple App Store, the following also applies, and you acknowledge that:</p>
       <ul>
         <li>these Terms are between you and Lumii, not Apple, and Apple is not responsible for the App or its content;</li>
         <li>the licence granted to you is limited to a non-transferable licence to use the App on any Apple-branded products that you own or control, as permitted by the App Store&apos;s Usage Rules;</li>
@@ -357,6 +451,10 @@ export default function TermsOfServicePage() {
         <li><strong>Postal address:</strong> HFJO&amp;CO LIMITED, 167–169 Great Portland Street, 5th Floor, London W1W 5PF, United Kingdom</li>
         <li><strong>Operator:</strong> HFJO&amp;CO LIMITED, registered in England &amp; Wales under company number 15421741</li>
       </ul>
+      <p>
+        A dedicated <strong>privacy@lumiiapp.com</strong> alias is being set up. Until it is live, please
+        use <strong>office@hfjo.co.uk</strong> — your message will reach the same person.
+      </p>
     </LegalLayout>
   );
 }
