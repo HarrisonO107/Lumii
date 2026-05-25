@@ -16,8 +16,8 @@ export default function PrivacyPolicyPage() {
           Privacy <em className="italic" style={{ color: "#F9A8C9" }}>Policy.</em>
         </>
       }
-      effectiveDate="24 May 2026"
-      lastUpdated="24 May 2026"
+      effectiveDate="25 May 2026"
+      lastUpdated="25 May 2026"
       intro={
         <>
           <p>
@@ -87,7 +87,6 @@ export default function PrivacyPolicyPage() {
         <li><strong>Photos you submit:</strong> the multi-angle face photos captured during a scan (or photos you pick from your library to analyse).</li>
         <li><strong>Content you create:</strong> goals you set, daily check-ins, journal entries, free-form questions you send to the in-app cat-mascot chat.</li>
         <li><strong>Saved locations (optional):</strong> if you enable location-based goal verification, the labels and coordinates of spots you save (e.g. &quot;gym&quot;, &quot;yoga studio&quot;). These are stored <strong>on your device only</strong>.</li>
-        <li><strong>Apple Health data (optional, iOS only):</strong> if you enable Apple Health integration for goal verification, the App reads sleep, workouts, heart-rate variability, hydration, and active energy <strong>on your device only</strong>. This data is never transmitted to our servers.</li>
         <li><strong>Subscription purchases:</strong> if you subscribe to Lumii Pro, Apple&apos;s App Store handles the transaction. Apple shares with us (via RevenueCat) the fact and status of your subscription, but never your card or payment details.</li>
         <li><strong>Referral and waitlist codes:</strong> if you redeem a referral code or a founding-member waitlist code, the code you entered.</li>
         <li><strong>Communications:</strong> any emails or messages you send us.</li>
@@ -225,11 +224,6 @@ export default function PrivacyPolicyPage() {
               <td>Send local reminder notifications you have opted into</td>
               <td>Notification preferences stored on your device</td>
               <td>Consent (Art. 6(1)(a))</td>
-            </tr>
-            <tr>
-              <td>Apple Health goal verification (on-device only)</td>
-              <td>Sleep, workouts, HRV, hydration, energy reads</td>
-              <td><strong>Explicit consent</strong> (Art. 9(2)(a)) — health data</td>
             </tr>
             <tr>
               <td>Geofence goal verification (on-device only)</td>
@@ -676,7 +670,7 @@ export default function PrivacyPolicyPage() {
         <li><strong>Restriction</strong> — ask us to pause our use of your data while a query is resolved.</li>
         <li><strong>Portability</strong> — ask for your data in a structured, machine-readable format.</li>
         <li><strong>Objection</strong> — object to processing based on our legitimate interests.</li>
-        <li><strong>Withdraw consent</strong> — for anything we process on the basis of your consent (including biometric data, Apple Health integration, cycle tracking, and geofence verification).</li>
+        <li><strong>Withdraw consent</strong> — for anything we process on the basis of your consent (including biometric data, cycle tracking, and geofence verification).</li>
         <li><strong>Not be subject to automated decision-making that produces legal or similarly significant effects</strong> — see Section 5.1 for why we believe this does not apply to Lumii, and how to request human review if you disagree.</li>
         <li><strong>Complain to a supervisory authority</strong> — the UK ICO (<code>ico.org.uk</code>) or your local EU data-protection authority.</li>
       </ul>
@@ -739,7 +733,7 @@ export default function PrivacyPolicyPage() {
       <ul>
         <li><strong>UK</strong> — 13 (UK GDPR Article 8, retained EU law).</li>
         <li><strong>United States</strong> — 13 for COPPA purposes (we collect personal data only from users 13+; COPPA does not apply at or above 13).</li>
-        <li><strong>EU member states</strong> — between 13 and 16 depending on the country. As of this policy&apos;s date, several EU member states have set the threshold at 16, including <strong>Germany, France, Ireland, the Netherlands, and others</strong>. In those countries, a user aged 13–15 needs parental consent for processing that relies on a &quot;consent&quot; lawful basis (notably our biometric scan, cycle tracking, and Apple Health integration).</li>
+        <li><strong>EU member states</strong> — between 13 and 16 depending on the country. As of this policy&apos;s date, several EU member states have set the threshold at 16, including <strong>Germany, France, Ireland, the Netherlands, and others</strong>. In those countries, a user aged 13–15 needs parental consent for processing that relies on a &quot;consent&quot; lawful basis (notably our biometric scan and cycle tracking).</li>
       </ul>
       <p>
         We currently rely on you to tell us your age truthfully during signup.{" "}
@@ -759,7 +753,7 @@ export default function PrivacyPolicyPage() {
         <li><strong>No behavioural advertising.</strong> We do not show ads anywhere in Lumii, full stop — see Section 3.4.</li>
         <li><strong>No use of under-18 user data to train any AI model</strong>, including our own and our subprocessors&apos;.</li>
         <li><strong>No profile photo prompted beyond the optional avatar.</strong> We never ask under-18 users to upload images of themselves to anywhere except the scan flow itself.</li>
-        <li><strong>Geofence and Apple Health integrations are off by default</strong> and require an explicit in-app opt-in.</li>
+        <li><strong>Geofence integration is off by default</strong> and requires an explicit in-app opt-in.</li>
         <li><strong>The same data-minimisation defaults apply to all users</strong>, so this set is not less protective for adults; it is simply protective for everyone.</li>
       </ul>
 
@@ -768,7 +762,7 @@ export default function PrivacyPolicyPage() {
       <ul>
         <li><strong>Review</strong> the personal data we hold about your child;</li>
         <li><strong>Request deletion</strong> of your child&apos;s account and associated data;</li>
-        <li><strong>Withdraw consent</strong> for any consent-based processing (biometric scan, Apple Health, cycle tracking, geofence verification);</li>
+        <li><strong>Withdraw consent</strong> for any consent-based processing (biometric scan, cycle tracking, geofence verification);</li>
         <li><strong>Restrict</strong> processing while a query is being resolved.</li>
       </ul>
       <p>
@@ -941,7 +935,6 @@ export default function PrivacyPolicyPage() {
         <li><strong>Delete a single scan</strong> (Scan history → swipe a scan → Delete). Removes the scan from your on-device history.</li>
         <li><strong>Delete your account</strong> (Settings → Account → Delete account). Removes your authentication record, your server-side profile, any cached tips on your profile, and any scan photo still inside the 24-hour server retention window. Pseudonymised audit records are retained as described in Section 6 (&quot;After account deletion: what we keep&quot;).</li>
         <li><strong>Revoke biometric consent</strong> — happens automatically when you delete your account; see Section 5.</li>
-        <li><strong>Revoke Apple Health access</strong> — iOS Settings → Privacy &amp; Security → Health → Lumii.</li>
         <li><strong>Revoke location access</strong> — iOS Settings → Privacy &amp; Security → Location Services → Lumii.</li>
         <li><strong>Revoke notification permissions</strong> — iOS Settings → Notifications → Lumii.</li>
       </ul>
@@ -993,12 +986,6 @@ export default function PrivacyPolicyPage() {
               <td>Geolocation data (precise) — <strong>sensitive personal information</strong></td>
               <td>Geofence-based goal verification (on-device only)</td>
               <td>On device only; not stored on our servers</td>
-              <td>No</td>
-            </tr>
-            <tr>
-              <td>Health and fitness data (Apple Health reads) — <strong>sensitive personal information</strong></td>
-              <td>Goal verification (on-device only)</td>
-              <td>On device only; <strong>never transmitted to our servers</strong></td>
               <td>No</td>
             </tr>
             <tr>

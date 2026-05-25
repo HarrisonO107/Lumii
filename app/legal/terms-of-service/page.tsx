@@ -16,8 +16,8 @@ export default function TermsOfServicePage() {
           Terms of <em className="italic" style={{ color: "#F9A8C9" }}>Service.</em>
         </>
       }
-      effectiveDate="24 May 2026"
-      lastUpdated="24 May 2026"
+      effectiveDate="25 May 2026"
+      lastUpdated="25 May 2026"
       intro={
         <p>
           These Terms of Service (&quot;<strong>Terms</strong>&quot;) are a legal agreement
