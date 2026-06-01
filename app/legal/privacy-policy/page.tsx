@@ -16,8 +16,8 @@ export default function PrivacyPolicyPage() {
           Privacy <em className="italic" style={{ color: "#F9A8C9" }}>Policy.</em>
         </>
       }
-      effectiveDate="25 May 2026"
-      lastUpdated="25 May 2026"
+      effectiveDate="1 June 2026"
+      lastUpdated="1 June 2026"
       intro={
         <>
           <p>
@@ -884,6 +884,15 @@ export default function PrivacyPolicyPage() {
         Subscriptions <strong>auto-renew</strong> at the end of each billing period unless you cancel at
         least <strong>24 hours before</strong> the end of the current period. Renewal is charged to your
         Apple ID payment method.
+      </p>
+      <p>
+        <strong>Free trial.</strong> New annual subscribers may be offered a <strong>3-day free
+        trial</strong>. The weekly plan has no trial and bills immediately. If you start the annual free
+        trial and do not cancel at least <strong>24 hours before it ends</strong>, it automatically
+        converts to a paid annual subscription at <strong>£39.99 / year</strong> and your Apple ID is
+        charged. Whether a trial is offered, and its exact length, is shown in the App before you confirm
+        and is governed by Apple&apos;s introductory-offer rules — an introductory offer is available only
+        once per Apple ID.
       </p>
 
       <h3>15.2 How payment works</h3>
