@@ -19,27 +19,27 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
 
     const tl = gsap.timeline({ onComplete });
 
-    // Animate in
+    // Animate in — quicker, tighter
     tl.to(chars, {
-      opacity: 1, y: 0, duration: 0.5, stagger: 0.05, ease: "power3.out",
-    }, 0.15);
+      opacity: 1, y: 0, duration: 0.42, stagger: 0.04, ease: "power3.out",
+    }, 0.1);
 
     tl.to(tagline, {
-      opacity: 1, y: 0, duration: 0.5, ease: "power3.out",
-    }, 0.5);
+      opacity: 1, y: 0, duration: 0.42, ease: "power3.out",
+    }, 0.38);
 
-    // Hold
-    tl.to({}, { duration: 0.4 });
+    // Brief hold
+    tl.to({}, { duration: 0.22 });
 
     // Fade content
     tl.to(container, {
-      opacity: 0, y: -30, duration: 0.4, ease: "power3.inOut",
+      opacity: 0, y: -24, duration: 0.32, ease: "power2.inOut",
     });
 
     // Slide bg away
     tl.to(bg, {
-      yPercent: -100, duration: 0.7, ease: "power4.inOut",
-    }, "-=0.2");
+      yPercent: -100, duration: 0.62, ease: "power4.inOut",
+    }, "-=0.18");
 
     return () => { tl.kill(); };
   }, [onComplete]);

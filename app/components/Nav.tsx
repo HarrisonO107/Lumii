@@ -65,10 +65,10 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
               <>
                 <div className="flex items-center gap-2 mb-5">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[10px] font-medium tracking-[0.2em] text-white/40 uppercase">Waitlist open</span>
+                  <span className="text-[10px] font-medium tracking-[0.2em] text-white/40 uppercase">Android waitlist open</span>
                 </div>
                 <h2 className="text-[28px] font-light text-white leading-[1.1] tracking-[-0.02em] mb-2">Reserve your spot.</h2>
-                <p className="text-[13px] text-white/35 font-light leading-[1.7] mb-7">Join 2,847 women already on the Lumii waitlist. Free access at launch — no credit card needed.</p>
+                <p className="text-[13px] text-white/35 font-light leading-[1.7] mb-7">iOS founding-member codes are all claimed. We&apos;re building the Android release now — join the waitlist to get it first. Free at launch, no card needed.</p>
                 <div className="flex flex-col gap-3">
                   <input
                     type="email" value={email}
@@ -90,7 +90,7 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
                   <div className="h-1 w-14 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
                     <div className="h-full rounded-full" style={{ width: "73%", background: "linear-gradient(90deg, #F9A8C9, #f472b6)" }} />
                   </div>
-                  <p className="text-[10px] text-white/25 font-light">364 spots left · Free at launch</p>
+                  <p className="text-[10px] text-white/25 font-light">Android launching soon · Free at launch</p>
                 </div>
               </>
             ) : (
@@ -109,20 +109,12 @@ function WaitlistModal({ onClose }: { onClose: () => void }) {
   );
 }
 
-const NAV_LINKS = [
-  { label: "HOW IT WORKS", href: "/how-it-works" },
-  { label: "FEATURES",     href: "/features" },
-  { label: "FAQ",          href: "/faq" },
-  { label: "CONTACT",      href: "/contact" },
-];
-
 export default function Nav() {
   const pathname = usePathname();
-  const [showModal, setShowModal]   = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled]     = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [scrolled, setScrolled]   = useState(false);
 
-  const openModal  = useCallback(() => { setShowModal(true);  setMobileOpen(false); }, []);
+  const openModal  = useCallback(() => setShowModal(true), []);
   const closeModal = useCallback(() => setShowModal(false), []);
 
   useEffect(() => {
@@ -131,15 +123,11 @@ export default function Nav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => { setMobileOpen(false); }, [pathname]);
-
   const isHome = pathname === "/";
 
   return (
     <>
-      <nav
-        className="fixed top-0 left-0 right-0 z-50"
-      >
+      <nav className="fixed top-0 left-0 right-0 z-50">
         {/* Main bar */}
         <div
           className="flex items-center justify-between transition-all duration-500 px-4 md:px-11"
@@ -187,132 +175,26 @@ export default function Nav() {
             </span>
           </Link>
 
-          {/* Desktop links — uppercase, tracked, absolutely centred */}
-          <div className="hidden md:flex items-center gap-9 absolute left-1/2 -translate-x-1/2">
-            {NAV_LINKS.map(({ label, href }) => {
-              const active = pathname === href;
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  className="text-[11px] font-medium tracking-[0.13em] transition-colors duration-200"
-                  style={{ color: active ? "#F9A8C9" : "rgba(255,255,255,0.52)" }}
-                  onMouseEnter={(e) => { if (!active) e.currentTarget.style.color = "rgba(255,255,255,0.9)"; }}
-                  onMouseLeave={(e) => { if (!active) e.currentTarget.style.color = "rgba(255,255,255,0.52)"; }}
-                >
-                  {label}
-                </Link>
-              );
-            })}
-          </div>
-
-          {/* Desktop CTAs */}
-          <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/referrals"
-              className="transition-all duration-200"
-              style={{
-                color: "#000",
-                fontSize: 12.5,
-                fontWeight: 600,
-                letterSpacing: "0.01em",
-                padding: "10px 22px",
-                borderRadius: 100,
-                border: "1.5px solid rgba(255,255,255,0.8)",
-                background: "#fff",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.85)";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.95)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = "#fff";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.8)";
-              }}
-            >
-              Invite &amp; Earn
-            </Link>
-            <motion.button
-              onClick={openModal}
-              whileHover={{ scale: 1.02, boxShadow: "0 6px 28px rgba(0,0,0,0.35)" }}
-              whileTap={{ scale: 0.97 }}
-              style={{
-                background: "#ffffff",
-                color: "#0d0612",
-                fontSize: 12.5,
-                fontWeight: 600,
-                letterSpacing: "0.01em",
-                padding: "10px 22px",
-                borderRadius: 100,
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              Join the Waitlist
-            </motion.button>
-          </div>
-
-          {/* Hamburger */}
-          <button
-            className="md:hidden flex flex-col gap-[5px] p-1.5"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+          {/* Single CTA — waitlist only */}
+          <motion.button
+            onClick={openModal}
+            whileHover={{ scale: 1.02, boxShadow: "0 6px 28px rgba(0,0,0,0.35)" }}
+            whileTap={{ scale: 0.97 }}
+            style={{
+              background: "#ffffff",
+              color: "#0d0612",
+              fontSize: 12.5,
+              fontWeight: 600,
+              letterSpacing: "0.01em",
+              padding: "10px 22px",
+              borderRadius: 100,
+              border: "none",
+              cursor: "pointer",
+            }}
           >
-            <motion.span animate={{ rotate: mobileOpen ? 45 : 0, y: mobileOpen ? 7 : 0 }} className="block w-5 h-px bg-white/60 origin-center" />
-            <motion.span animate={{ opacity: mobileOpen ? 0 : 1 }} className="block w-5 h-px bg-white/60" />
-            <motion.span animate={{ rotate: mobileOpen ? -45 : 0, y: mobileOpen ? -7 : 0 }} className="block w-5 h-px bg-white/60 origin-center" />
-          </button>
+            Join the Waitlist
+          </motion.button>
         </div>
-
-        {/* Mobile menu */}
-        <AnimatePresence>
-          {mobileOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -8, scaleY: 0.95 }}
-              animate={{ opacity: 1, y: 0, scaleY: 1 }}
-              exit={{ opacity: 0, y: -8, scaleY: 0.95 }}
-              transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="mx-4 mt-2 rounded-2xl overflow-hidden"
-              style={{ background: "rgba(10,5,14,0.97)", border: "1px solid rgba(255,255,255,0.07)", backdropFilter: "blur(24px)", transformOrigin: "top" }}
-            >
-              <div className="p-5 flex flex-col gap-1">
-                {NAV_LINKS.map(({ label, href }) => {
-                  const active = pathname === href;
-                  return (
-                    <Link
-                      key={href}
-                      href={href}
-                      className="px-3 py-3 rounded-xl text-[12px] font-medium tracking-[0.1em] transition-colors"
-                      style={{ color: active ? "#F9A8C9" : "rgba(255,255,255,0.52)", background: active ? "rgba(249,168,201,0.06)" : "transparent" }}
-                    >
-                      {label}
-                    </Link>
-                  );
-                })}
-                <div className="mt-3 pt-3 flex flex-col gap-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                  <Link
-                    href="/referrals"
-                    className="w-full py-3 rounded-xl text-[13px] font-semibold text-center"
-                    style={{
-                      color: "#000",
-                      border: "1.5px solid rgba(255,255,255,0.8)",
-                      background: "#fff",
-                    }}
-                  >
-                    Invite &amp; Earn
-                  </Link>
-                  <button
-                    onClick={openModal}
-                    className="w-full py-3 rounded-xl text-[13px] font-semibold"
-                    style={{ background: "#fff", color: "#0d0612" }}
-                  >
-                    Join the Waitlist →
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </nav>
 
       <AnimatePresence>

@@ -53,18 +53,12 @@ export default function Footer() {
           >
             Privacy
           </Link>
-          <Link
-            href="/contact"
+          <a
+            href="mailto:hello@lumiiapp.com"
             className="text-[11px] font-medium tracking-[0.12em] uppercase text-white/45 hover:text-white/85 transition-colors"
           >
             Contact
-          </Link>
-          <Link
-            href="/faq"
-            className="text-[11px] font-medium tracking-[0.12em] uppercase text-white/45 hover:text-white/85 transition-colors"
-          >
-            FAQ
-          </Link>
+          </a>
         </nav>
       </div>
     </footer>

@@ -299,6 +299,112 @@ function ScoreShowcase() {
   );
 }
 
+// 4b. App screenshots showcase
+const shots = [
+  { src: "/screenshots/app-confidence.jpg", label: "Confidence rituals" },
+  { src: "/screenshots/app-home.jpg",       label: "Your daily glow" },
+  { src: "/screenshots/app-score.jpg",      label: "Your beauty read" },
+  { src: "/screenshots/app-goals.jpg",      label: "Goals with Momo" },
+  { src: "/screenshots/app-chat.jpg",       label: "Chat with Lumii" },
+];
+
+// Fanned arc poses (desktop), left → right; index 2 is the raised centre
+const poses = [
+  { rot: -13, ty: 52, scale: 0.80, z: 1 },
+  { rot: -6,  ty: 22, scale: 0.90, z: 2 },
+  { rot: 0,   ty: 0,  scale: 1.05, z: 3 },
+  { rot: 6,   ty: 22, scale: 0.90, z: 2 },
+  { rot: 13,  ty: 52, scale: 0.80, z: 1 },
+];
+
+function PhoneFrame({ src, raised }: { src: string; raised?: boolean }) {
+  return (
+    <div
+      className="relative rounded-[2.2rem] p-[6px]"
+      style={{
+        background: "linear-gradient(160deg, #202024 0%, #08080a 100%)",
+        border: "1px solid rgba(0,0,0,0.55)",
+        boxShadow: raised
+          ? "0 44px 90px -28px rgba(20,8,16,0.55), 0 10px 30px rgba(0,0,0,0.25)"
+          : "0 30px 64px -30px rgba(20,8,16,0.4)",
+        width: "100%",
+      }}
+    >
+      {/* Notch */}
+      <div className="absolute top-[6px] left-1/2 -translate-x-1/2 z-10" style={{ width: "32%", height: "2.1%", minHeight: 14, background: "#08080a", borderRadius: "0 0 10px 10px" }} />
+      <div className="overflow-hidden rounded-[1.75rem]" style={{ aspectRatio: "1242 / 2688", background: "#08080a" }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt="" className="w-full h-full object-cover object-top" draggable={false} />
+      </div>
+    </div>
+  );
+}
+
+function AppShowcase() {
+  const ref = useRef<HTMLElement>(null);
+  useReveal(ref);
+  return (
+    <section ref={ref} className="relative py-28 md:py-40 px-6 md:px-20 overflow-hidden" style={{ background: C.cream }}>
+      {/* Soft rose glow behind the phones */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 50% 42% at 50% 62%, ${C.roseBg} 0%, transparent 70%)` }} />
+
+      <div className="relative max-w-[1100px] mx-auto">
+        <div className="text-center mb-14 md:mb-24">
+          <p data-r="" className="text-[10px] font-medium tracking-[0.3em] uppercase mb-3" style={{ color: C.textTer }}>Inside the app</p>
+          <h2 data-r="" className="text-[28px] md:text-[42px] leading-tight tracking-[-0.03em]" style={{ fontFamily: SERIF, color: C.text }}>
+            This is what you&apos;ll <em style={{ color: C.rose }}>open</em>
+          </h2>
+          <p data-r="" className="text-[14px] font-light mt-4 max-w-[440px] mx-auto" style={{ color: C.textSec }}>
+            Already live on iOS. Now landing on Android — every screen built around your actual measurements.
+          </p>
+        </div>
+
+        {/* Desktop — fanned arc */}
+        <div data-r="" className="hidden md:flex items-end justify-center" style={{ minHeight: 520 }}>
+          {shots.map((shot, i) => {
+            const p = poses[i];
+            return (
+              <div
+                key={shot.src}
+                style={{
+                  width: 200,
+                  marginLeft: i === 0 ? 0 : -44,
+                  zIndex: p.z,
+                  transform: `translateY(${p.ty}px) rotate(${p.rot}deg) scale(${p.scale})`,
+                  transformOrigin: "bottom center",
+                }}
+              >
+                <div className="phone-float" style={{ animationDelay: `${i * 0.6}s` }}>
+                  <PhoneFrame src={shot.src} raised={i === 2} />
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Mobile — horizontal snap scroll */}
+        <div data-r="" className="md:hidden flex gap-5 overflow-x-auto scroll-none snap-x snap-mandatory -mx-6 px-6 pb-3">
+          {shots.map((shot, i) => (
+            <div key={shot.src} className="snap-center shrink-0 flex flex-col items-center" style={{ width: "62vw", maxWidth: 250 }}>
+              <PhoneFrame src={shot.src} raised={i === 2} />
+              <p className="text-[11px] font-medium mt-4 text-center" style={{ color: C.textSec }}>{shot.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Caption row (desktop) */}
+        <div className="hidden md:flex items-center justify-center gap-2 mt-16">
+          {shots.map((shot) => (
+            <span key={shot.src} className="text-[10px] font-medium tracking-[0.04em] px-3 py-1.5 rounded-full" style={{ background: "#fff", border: `1px solid ${C.border}`, color: C.textSec }}>
+              {shot.label}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // 5. Features accordion
 const features = [
   { title: "Precision Analysis", body: "75+ facial metrics scored against ideal proportions. Every measurement comes with its actual value, ideal range, and a clear score out of 100." },
@@ -422,11 +528,17 @@ function FinalCTA() {
   return (
     <section ref={ref} className="relative py-28 md:py-40 px-6 md:px-20 overflow-hidden" style={{ background: C.cream }}>
       <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(ellipse 60% 40% at 50% 70%, ${C.roseBg} 0%, transparent 70%)` }} />
-      <div className="relative max-w-[420px] mx-auto text-center">
+      <div className="relative max-w-[440px] mx-auto text-center">
+        <div data-r="" className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full" style={{ background: "#fff", border: `1px solid ${C.border}` }}>
+          <span style={{ width: 5, height: 5, borderRadius: 99, background: C.green }} />
+          <span className="text-[10px] font-medium tracking-[0.08em] uppercase" style={{ color: C.textSec }}>Android waitlist open · iOS founding codes closed</span>
+        </div>
         <h2 data-r="" className="text-[26px] md:text-[40px] leading-[1.2] tracking-[-0.03em] mb-3" style={{ fontFamily: SERIF, color: C.text }}>
           See what 584 landmarks reveal about <em style={{ color: C.rose }}>your face.</em>
         </h2>
-        <p data-r="" className="text-[13px] font-light mb-10" style={{ color: C.textSec }}>Join the waitlist. Be first to get your score.</p>
+        <p data-r="" className="text-[13px] font-light mb-10 leading-relaxed" style={{ color: C.textSec }}>
+          The iOS founding-member codes are all claimed. We&apos;re building the Android release now — join the waitlist to be first in line when it drops.
+        </p>
         <div data-r="">
           {!submitted ? (
             <div className="flex flex-col gap-3">
@@ -438,7 +550,7 @@ function FinalCTA() {
               <button onClick={handleSubmit} disabled={loading}
                 className="w-full font-semibold text-[15px] py-4 rounded-xl disabled:opacity-50 flex items-center justify-center gap-2 active:scale-[0.97] transition-transform"
                 style={{ background: C.green, color: "#fff", boxShadow: "0 4px 20px rgba(59,90,62,0.25)" }}>
-                <span>{loading ? "Reserving…" : "Join the Waitlist"}</span>
+                <span>{loading ? "Reserving…" : "Join the Android Waitlist"}</span>
                 <span style={{ fontSize: 18 }}>→</span>
               </button>
               {error && <p className="text-[11px]" style={{ color: C.rose }}>{error}</p>}
@@ -450,7 +562,7 @@ function FinalCTA() {
             </div>
           )}
         </div>
-        <p data-r="" className="text-[10px] mt-8" style={{ color: C.textTer }}>Available on iOS. Android coming soon.</p>
+        <p data-r="" className="text-[10px] mt-8" style={{ color: C.textTer }}>Live on iOS. Android release in the works — free at launch.</p>
       </div>
     </section>
   );
@@ -465,6 +577,7 @@ export default function Sections() {
       <DarkToCream />
       <HowItWorks />
       <ScoreShowcase />
+      <AppShowcase />
       <FeaturesAccordion />
       <DataStrip />
       <Positioning />

@@ -91,6 +91,28 @@
   display: none;
 }
 
+/* App-showcase phone float */
+@keyframes phone-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -10px, 0); }
+}
+
+.phone-float {
+  animation: phone-float 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phone-float { animation: none; }
+}
+
+/* Hero phone fan — width drives the whole arc (margins + offsets use calc) */
+.phone-fan { --phw: 86px; }
+@media (min-width: 400px)  { .phone-fan { --phw: 96px; } }
+@media (min-width: 640px)  { .phone-fan { --phw: 118px; } }
+@media (min-width: 768px)  { .phone-fan { --phw: 128px; } }
+@media (min-width: 1024px) { .phone-fan { --phw: 150px; } }
+
 /* 4. LEGAL PROSE — dark themed long-form readability */
 .legal-prose {
   color: rgba(255, 255, 255, 0.6);
