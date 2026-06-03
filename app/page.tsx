@@ -1,19 +1,5 @@
-"use client";
-
-import { useState, useCallback } from "react";
-import Preloader from "./components/Preloader";
-import Hero from "./components/Hero";
+import Site from "./components/launch/Site";
 
 export default function Home() {
-  const [preloaderDone, setPreloaderDone] = useState(false);
-  const handlePreloaderComplete = useCallback(() => setPreloaderDone(true), []);
-
-  return (
-    <>
-      {!preloaderDone && <Preloader onComplete={handlePreloaderComplete} />}
-      <main className="relative w-full">
-        <Hero />
-      </main>
-    </>
-  );
+  return <Site />;
 }
