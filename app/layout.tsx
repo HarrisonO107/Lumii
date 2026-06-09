@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Hanken_Grotesk, Spline_Sans_Mono } from "next/font/google";
 import "./globals.css";
+import JsonLd from "./JsonLd";
 
 const display = Fraunces({
   subsets: ["latin"],
@@ -29,9 +30,62 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Lumii — Your face, by the numbers.",
+  metadataBase: new URL("https://www.lumiiapp.com"),
+  title: {
+    default: "Lumii — AI Face Analysis & Skincare Glow Up App",
+    template: "%s · Lumii",
+  },
   description:
-    "584 landmarks. 75 measurements. One beauty score, and the exact routine to raise it. The most precise facial analysis ever put in a pocket.",
+    "Lumii analyzes your face from a single photo — 584 landmarks, 75+ metrics, one glow-up score — then builds a personalized skincare and beauty plan made for your actual face. Free on iOS.",
+  applicationName: "Lumii",
+  keywords: [
+    "face analysis app",
+    "facial analysis",
+    "AI beauty advisor",
+    "skincare app",
+    "glow up app",
+    "face rating app",
+    "skin analysis",
+    "personalized skincare routine",
+    "beauty score",
+    "facial symmetry analysis",
+    "AI skincare",
+    "glow up plan",
+  ],
+  authors: [{ name: "Lumii" }],
+  creator: "Lumii",
+  publisher: "Lumii",
+  category: "Health & Fitness",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    url: "https://www.lumiiapp.com",
+    siteName: "Lumii",
+    title: "Lumii — AI Face Analysis & Skincare Glow Up",
+    description:
+      "Upload one photo. Get a beauty plan built for your actual face — 584 landmarks, 75+ metrics, one score that tells you everything.",
+    locale: "en_US",
+    // og image is auto-provided by app/opengraph-image.tsx
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Lumii — AI Face Analysis & Skincare Glow Up",
+    description:
+      "Upload one photo. Get a beauty plan built for your actual face — 584 landmarks, 75+ metrics, one score.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  appleWebApp: { capable: true, title: "Lumii", statusBarStyle: "black-translucent" },
+  itunes: { appId: "6769432089" }, // Safari/Spotlight smart app banner for the iOS app
 };
 
 export default function RootLayout({
@@ -42,6 +96,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="paper-grain font-body antialiased" style={{ background: "#F4EEE4", color: "#1C1815" }}>
+        <JsonLd />
         {children}
       </body>
     </html>
