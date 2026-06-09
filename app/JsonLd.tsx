@@ -46,7 +46,7 @@ export default function JsonLd() {
           name: "What is Lumii?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "Lumii is an AI-powered beauty advisor that analyses your face to give you a personalised Glow Score and skincare routine. Upload a photo, and our engine scans 47 facial data points — texture, tone, symmetry, hydration, and more — to build a routine designed specifically for your skin.",
+            text: "Lumii is an AI-powered beauty advisor that analyses your face to give you a personalised Glow Score and skincare routine. Upload a photo, and our engine maps 584 facial landmarks and scores 75+ metrics — texture, tone, symmetry, hydration, and more — to build a routine designed specifically for your skin.",
           },
         },
         {
@@ -54,7 +54,7 @@ export default function JsonLd() {
           name: "Does Lumii store my photos?",
           acceptedAnswer: {
             "@type": "Answer",
-            text: "No. Your photos are processed entirely in memory and immediately discarded after analysis. We do not store, retain, share, or use your facial imagery for any purpose whatsoever.",
+            text: "Your face photos are uploaded to our server only to be analysed, then automatically deleted within 24 hours of upload. We never sell them, share them with advertisers, or use them to train any third-party AI model.",
           },
         },
         {

@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: "%s · Lumii",
   },
   description:
-    "Lumii analyzes your face from a single photo — 584 landmarks, 75+ metrics, one glow-up score — then builds a personalized skincare and beauty plan made for your actual face. Free on iOS.",
+    "Lumii analyzes your face from one photo — 584 landmarks, 75+ metrics, one glow-up score — and builds your skincare & beauty plan. Free on iOS.",
   applicationName: "Lumii",
   keywords: [
     "face analysis app",

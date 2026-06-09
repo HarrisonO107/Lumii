@@ -8,7 +8,7 @@ const faqs = [
     items: [
       {
         q: "What is Lumii?",
-        a: "Lumii is an AI-powered beauty advisor that analyses your face to give you a personalised Glow Score and skincare routine. Upload a photo, and our engine scans 47 facial data points — texture, tone, symmetry, hydration, and more — to build a routine designed specifically for your skin.",
+        a: "Lumii is an AI-powered beauty advisor that analyses your face to give you a personalised Glow Score and skincare routine. Upload a photo, and our engine maps 584 facial landmarks and scores 75+ metrics — texture, tone, symmetry, hydration, and more — to build a routine designed specifically for your skin.",
       },
       {
         q: "Is Lumii a dermatologist?",
@@ -16,11 +16,11 @@ const faqs = [
       },
       {
         q: "When is Lumii launching?",
-        a: "We're currently in closed beta. Join the waitlist and you'll be among the first to access Lumii when we open — at no cost. We'll email you before anyone else.",
+        a: "Lumii is live now on iOS — download it free on the App Store. Android is in development; join the waitlist and we'll email you the moment it launches.",
       },
       {
         q: "Will Lumii be free?",
-        a: "Lumii will be free to use at launch for waitlist members. We plan to introduce a premium tier later with advanced features like progress tracking and detailed product recommendations.",
+        a: "Lumii is free to download and use on iOS. There's an optional Lumii Pro subscription (£3.99/week or £39.99/year) that unlocks advanced features like progress tracking and detailed product recommendations.",
       },
     ],
   },
@@ -29,7 +29,7 @@ const faqs = [
     items: [
       {
         q: "Does Lumii store my photos?",
-        a: "No. Your photos are processed entirely in memory and immediately discarded after analysis. We do not store, retain, share, or use your facial imagery for any purpose whatsoever.",
+        a: "Your face photos are uploaded to our server only to be analysed, then automatically deleted within 24 hours of upload. We never sell them, share them with advertisers, or use them to train any third-party AI model.",
       },
       {
         q: "Is my data safe?",
