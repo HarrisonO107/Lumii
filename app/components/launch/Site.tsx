@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView, animate } from "framer-motion";
+import { motion, useInView, animate, useReducedMotion } from "framer-motion";
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -211,102 +211,460 @@ function Masthead() {
   );
 }
 
-/* ─────────────────────────  HERO  ───────────────────────── */
+/* ───────────────────  HERO — "THE READING ROOM"  ─────────────────── */
+/* A pinned, scroll-scrubbed develop: a soft "?" portrait is read by a single
+   caliper, 584 landmarks settle, the φ-geometry proves it, and "97 · ethereal"
+   arrives last. ONE normalized progress (0→1) drives every layer imperatively
+   (no per-frame React state); a static composition renders under
+   prefers-reduced-motion. Pinned via sticky (robust on touch), not GSAP. */
 
-function Hero() {
+const clampN = (v: number, a: number, b: number) => (v < a ? a : v > b ? b : v);
+const seg = (p: number, a: number, b: number) => clampN((p - a) / (b - a), 0, 1);
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+
+function hexToRgb(h: string): [number, number, number] {
+  const n = parseInt(h.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+const RGB_PAPER = hexToRgb(C.paper);
+const RGB_INK = hexToRgb(C.ink);
+const mix = (a: number[], b: number[], t: number) =>
+  `rgb(${Math.round(lerp(a[0], b[0], t))},${Math.round(lerp(a[1], b[1], t))},${Math.round(lerp(a[2], b[2], t))})`;
+
+function mulberry32(seed: number) {
+  let s = seed >>> 0;
+  return () => {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+type LM = { x: number; y: number; key: boolean };
+
+// Face region in plate-normalized coords (tuned to face2.png inside a 4/5 plate)
+const FACE = { topY: 0.11, chinY: 0.5, cx: 0.5, halfW: 0.225 };
+
+function buildFaceMesh(): LM[] {
+  const rnd = mulberry32(20260609);
+  const P: LM[] = [];
+  const { cx, topY, chinY, halfW } = FACE;
+  const faceH = chinY - topY;
+  const ecy = (topY + chinY) / 2;
+  const ry = faceH / 2;
+  const push = (x: number, y: number, key = false, j = 0.008) =>
+    P.push({ x: x + (rnd() - 0.5) * j, y: y + (rnd() - 0.5) * j, key });
+
+  for (let i = 0; i < 60; i++) {
+    const a = -Math.PI / 2 + (i / 60) * Math.PI * 2;
+    push(cx + Math.cos(a) * halfW, ecy + Math.sin(a) * ry * 1.05);
+  }
+  for (let i = 0; i < 22; i++) {
+    const t = i / 21;
+    const a = Math.PI * (0.16 + 0.68 * t);
+    push(cx - Math.cos(a) * halfW * 0.97, ecy + Math.sin(a) * ry * 1.05, i === 11);
+  }
+  const browY = topY + faceH * 0.32;
+  for (let s = -1; s <= 1; s += 2)
+    for (let i = 0; i < 9; i++) {
+      const t = i / 8;
+      push(cx + s * (0.05 + t * 0.12), browY - Math.sin(t * Math.PI) * 0.012, i === 0 || i === 8);
+    }
+  const eyeY = topY + faceH * 0.42;
+  for (let s = -1; s <= 1; s += 2) {
+    const ex = cx + s * 0.105;
+    for (let i = 0; i < 12; i++) {
+      const a = (i / 12) * Math.PI * 2;
+      push(ex + Math.cos(a) * 0.05, eyeY + Math.sin(a) * 0.022, i === 0 || i === 6);
+    }
+  }
+  const noseBotY = topY + faceH * 0.64;
+  for (let i = 0; i < 7; i++) push(cx, lerp(eyeY, noseBotY, i / 6), i === 6, 0.004);
+  for (let i = 0; i < 7; i++) {
+    const t = i / 6;
+    push(cx + (t - 0.5) * 0.075, noseBotY + Math.abs(t - 0.5) * 0.012, i === 0 || i === 6);
+  }
+  const lipY = topY + faceH * 0.77;
+  for (let i = 0; i < 15; i++) {
+    const t = i / 14;
+    const x = cx + (t - 0.5) * 0.15;
+    const yo = Math.sin(t * Math.PI) * 0.018;
+    push(x, lipY - yo, i === 0 || i === 14);
+    push(x, lipY + yo * 0.7);
+  }
+  for (let i = 0; i < 34; i++) {
+    const a = rnd() * Math.PI * 2;
+    const rr = Math.sqrt(rnd());
+    push(cx + Math.cos(a) * halfW * 0.8 * rr, ecy + Math.sin(a) * ry * 0.88 * rr);
+  }
+  return P;
+}
+
+const BANDS = [
+  { y: 0.2, label: "BROW TILT", value: "4.6°" },
+  { y: 0.27, label: "INTERCANTHAL", value: "33.1 MM" },
+  { y: 0.34, label: "NASAL WIDTH", value: "31.8 MM" },
+  { y: 0.42, label: "LIP FULLNESS", value: "8.7 / 10" },
+  { y: 0.48, label: "JAW ANGLE", value: "122°" },
+];
+
+function ReadingRoomHero() {
+  const prefersReduced = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  // Keep SSR and first client render in agreement (both non-reduced), then settle
+  // to the real preference after mount — avoids a hydration mismatch on the
+  // section height (320vh vs 100svh) for reduced-motion users.
+  const reduce = mounted ? prefersReduced : false;
+  const sectionRef = useRef<HTMLElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const rulerRef = useRef<HTMLDivElement>(null);
+  const softRef = useRef<HTMLImageElement>(null);
+  const sharpRef = useRef<HTMLDivElement>(null);
+  const vignRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const plateRef = useRef<HTMLDivElement>(null);
+  const tabRef = useRef<HTMLDivElement>(null);
+  const cueRef = useRef<HTMLDivElement>(null);
+  const numWrapRef = useRef<HTMLDivElement>(null);
+  const numRef = useRef<HTMLDivElement>(null);
+  const outOfRef = useRef<HTMLDivElement>(null);
+  const etherRef = useRef<HTMLDivElement>(null);
+  const badgesRef = useRef<HTMLDivElement>(null);
+  const quoteRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    const canvas = canvasRef.current;
+    const section = sectionRef.current;
+    if (!stage || !canvas || !section) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const mesh = buildFaceMesh();
+    const mobile = window.matchMedia("(max-width: 768px)").matches;
+    const visible = mobile ? mesh.filter((_, i) => i % 3 !== 0) : mesh;
+
+    let cssW = 0,
+      cssH = 0;
+    const measure = () => {
+      const r = canvas.getBoundingClientRect();
+      const dpr = Math.min(mobile ? 1.5 : 2, window.devicePixelRatio || 1);
+      cssW = r.width;
+      cssH = r.height;
+      canvas.width = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    const bandAt = (cy: number) => {
+      let b = BANDS[0];
+      for (const x of BANDS) if (cy >= x.y) b = x;
+      return b;
+    };
+
+    const draw = (p: number, caliperY: number, dev: number) => {
+      const W = cssW,
+        H = cssH;
+      ctx.clearRect(0, 0, W, H);
+      const span = FACE.chinY - FACE.topY + 0.14;
+      const fH = FACE.chinY - FACE.topY;
+
+      // 0.50→0.66 : landmarks settle top→bottom, then dim (but stay legible) before the number
+      const wave = seg(p, 0.5, 0.66);
+      const gdot = wave > 0 ? lerp(1, 0.55, seg(p, 0.66, 0.82)) : 0;
+      if (gdot > 0) {
+        for (const m of visible) {
+          const ny = (m.y - FACE.topY) / span;
+          const a = clampN((wave * 1.25 - ny) / 0.1, 0, 1) * gdot;
+          if (a < 0.02) continue;
+          ctx.beginPath();
+          ctx.arc(m.x * W, m.y * H, m.key ? 2.3 : 1.5, 0, Math.PI * 2);
+          ctx.fillStyle = m.key ? `rgba(199,97,124,${0.95 * a})` : `rgba(247,242,233,${0.6 * a})`;
+          ctx.fill();
+        }
+      }
+
+      // 0.66→0.78 : the proof — thirds + one φ rectangle (the only forest)
+      const geo = seg(p, 0.66, 0.78);
+      if (geo > 0) {
+        ctx.lineWidth = 1;
+        const thirds = [FACE.topY + fH * 0.32, FACE.topY + fH * 0.64, FACE.chinY - 0.004];
+        thirds.forEach((ty, i) => {
+          const fr = clampN(geo * 3 - i, 0, 1);
+          if (fr <= 0) return;
+          const x0 = W * (FACE.cx - FACE.halfW * 1.2);
+          ctx.strokeStyle = "rgba(108,150,112,0.92)";
+          ctx.beginPath();
+          ctx.moveTo(x0, ty * H);
+          ctx.lineTo(x0 + W * FACE.halfW * 2.4 * fr, ty * H);
+          ctx.stroke();
+        });
+        if (geo > 0.5) {
+          const fr = clampN((geo - 0.5) / 0.5, 0, 1);
+          const x = W * (FACE.cx - 0.12),
+            y = H * (FACE.topY + fH * 0.4),
+            w = W * 0.24,
+            h = H * fH * 0.42;
+          ctx.strokeStyle = "rgba(118,160,122,0.95)";
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          let rem = 2 * (w + h) * fr,
+            cxp = x,
+            cyp = y;
+          for (const [sx, sy] of [[w, 0], [0, h], [-w, 0], [0, -h]] as const) {
+            const len = Math.abs(sx) + Math.abs(sy);
+            const f = clampN(rem / len, 0, 1);
+            cxp += sx * f;
+            cyp += sy * f;
+            ctx.lineTo(cxp, cyp);
+            rem -= len;
+            if (rem <= 0) break;
+          }
+          ctx.stroke();
+        }
+      }
+
+      // 0.25→0.55 : the caliper (drawn last, on top) — the signature
+      const calA = Math.min(seg(p, 0.25, 0.28), 1) - seg(p, 0.52, 0.56);
+      if (calA > 0.02) {
+        const y = caliperY * H;
+        ctx.strokeStyle = `rgba(244,238,228,${0.9 * calA})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.1, y);
+        ctx.lineTo(W * 0.9, y);
+        ctx.stroke();
+        ctx.strokeStyle = `rgba(194,86,111,${0.95 * calA})`;
+        ctx.lineWidth = 1.5;
+        for (const x of [W * 0.1, W * 0.9]) {
+          ctx.beginPath();
+          ctx.moveTo(x, y - 5);
+          ctx.lineTo(x, y + 5);
+          ctx.stroke();
+        }
+        const b = bandAt(caliperY);
+        ctx.font = "600 10px 'Spline Sans Mono', ui-monospace, monospace";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "bottom";
+        ctx.fillStyle = `rgba(244,238,228,${0.85 * calA})`;
+        ctx.fillText(`${b.label} · ${b.value}`, W * 0.88, y - 7);
+        ctx.textAlign = "left";
+      }
+    };
+
+    const render = (p: number) => {
+      const dark = seg(p, 0.12, 0.42);
+      stage.style.backgroundColor = mix(RGB_PAPER, RGB_INK, dark);
+      stage.style.setProperty("--fg", mix(RGB_INK, RGB_PAPER, dark));
+      if (rulerRef.current)
+        rulerRef.current.style.clipPath = `inset(${(1 - seg(p, 0.05, 0.22)) * 100}% 0 0 0)`;
+      if (softRef.current) {
+        const c = seg(p, 0.1, 0.3);
+        softRef.current.style.filter = `blur(${lerp(7, 4.5, c)}px) brightness(${lerp(1.08, 1.02, c)}) saturate(${lerp(1.2, 1.12, c)})`;
+      }
+      const dev = seg(p, 0.26, 0.5);
+      const caliperY = lerp(FACE.topY, FACE.chinY, dev);
+      const revealY = dev >= 1 ? 1 : caliperY;
+      if (sharpRef.current) sharpRef.current.style.clipPath = `inset(0 0 ${(1 - revealY) * 100}% 0)`;
+      if (vignRef.current) vignRef.current.style.opacity = `${dark}`;
+      const num = seg(p, 0.78, 0.9);
+      if (plateRef.current) plateRef.current.style.transform = `scale(${lerp(1, 0.985, num)})`;
+      if (numWrapRef.current) {
+        numWrapRef.current.style.opacity = `${seg(p, 0.76, 0.82)}`;
+        numWrapRef.current.style.transform = `translateY(${lerp(14, 0, seg(p, 0.76, 0.88))}px)`;
+      }
+      if (numRef.current) numRef.current.textContent = `${Math.round(lerp(0, 97, seg(p, 0.78, 0.87)))}`;
+      if (outOfRef.current) outOfRef.current.style.opacity = `${seg(p, 0.75, 0.8)}`;
+      if (etherRef.current) {
+        etherRef.current.style.opacity = `${seg(p, 0.86, 0.92)}`;
+        etherRef.current.style.transform = `translateY(${lerp(12, 0, seg(p, 0.86, 0.96))}px)`;
+      }
+      if (cueRef.current) cueRef.current.style.opacity = `${1 - seg(p, 0.03, 0.12)}`;
+      if (tabRef.current) tabRef.current.textContent = p > 0.6 ? "PLATE 01 · READ" : "PLATE 01 · UNREAD";
+      if (badgesRef.current) badgesRef.current.style.opacity = `${seg(p, 0.85, 1)}`;
+      if (quoteRef.current) {
+        quoteRef.current.style.opacity = `${seg(p, 0.9, 0.99)}`;
+        quoteRef.current.style.transform = `translateY(${lerp(18, 0, seg(p, 0.9, 1))}px)`;
+      }
+      draw(p, caliperY, dev);
+    };
+
+    if (reduce) {
+      measure();
+      render(1);
+      const onR = () => {
+        measure();
+        render(1);
+      };
+      window.addEventListener("resize", onR);
+      return () => window.removeEventListener("resize", onR);
+    }
+
+    measure();
+    let cur = 0,
+      target = 0,
+      raf = 0,
+      alive = true,
+      running = false;
+    const ro = new ResizeObserver(([e]) => {
+      // Skip sticky-reflow callbacks that don't actually change the canvas box.
+      if (e.contentRect.width === cssW && e.contentRect.height === cssH) return;
+      measure();
+      render(cur);
+    });
+    ro.observe(canvas);
+
+    const compute = () => {
+      const r = section.getBoundingClientRect();
+      // Use the sticky stage's own height (100svh — stable), NOT window.innerHeight,
+      // which changes as the mobile URL bar shows/hides and would make progress jump.
+      const dist = r.height - stage.offsetHeight;
+      return dist <= 0 ? 0 : clampN(-r.top / dist, 0, 1);
+    };
+    const tick = () => {
+      if (!alive) return;
+      cur += (target - cur) * 0.14;
+      if (Math.abs(target - cur) < 0.0002) cur = target;
+      render(cur);
+      if (cur === target) {
+        running = false; // settled — stop burning frames until the next scroll
+        return;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    const wake = () => {
+      if (!running && alive) {
+        running = true;
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    const onScroll = () => {
+      target = compute();
+      wake();
+    };
+    target = compute();
+    render(cur);
+    wake();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      alive = false;
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [reduce]);
+
+  const TRACK = 320; // vh of scroll the pin consumes
+  const cropMarks = [
+    "top-[-12px] left-[-12px] border-l border-t",
+    "top-[-12px] right-[-12px] border-r border-t",
+    "bottom-[-12px] left-[-12px] border-l border-b",
+    "bottom-[-12px] right-[-12px] border-r border-b",
+  ];
+
   return (
-    <section id="top" className="relative overflow-hidden pt-[120px] md:pt-[150px] pb-20 md:pb-28">
-      {/* left ruler */}
-      <div className="ruler-y absolute left-0 top-0 bottom-0 w-[10px] hidden md:block opacity-70" />
-      {/* warm bloom */}
-      <div className="absolute pointer-events-none" style={{ top: "8%", right: "-8%", width: "60%", height: "70%", background: "radial-gradient(ellipse at center, rgba(194,86,111,0.12) 0%, transparent 66%)" }} />
+    <section id="top" ref={sectionRef} style={{ height: reduce ? "100svh" : `${TRACK}vh` }}>
+      <div
+        ref={stageRef}
+        className="sticky top-0 h-[100svh] overflow-hidden flex items-center"
+        style={{ background: C.paper, ["--fg" as string]: C.ink } as React.CSSProperties}
+      >
+        <div
+          ref={rulerRef}
+          className="ruler-y absolute left-0 top-0 bottom-0 w-[10px] hidden md:block"
+          style={{ opacity: 0.5 }}
+        />
 
-      <div className="max-w-[1320px] mx-auto px-5 md:px-10 grid lg:grid-cols-[1.05fr_0.95fr] gap-12 lg:gap-8 items-center">
-        {/* copy */}
-        <div className="relative z-10">
-          <motion.div
-            className="mono-label flex items-center gap-3 mb-7"
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.1 }}
-          >
-            <span style={{ color: C.rose }}>Vol. 01</span>
-            <span className="w-8 h-px" style={{ background: C.line }} />
-            <span>The science of your face</span>
-          </motion.div>
+        <div className="w-full max-w-[1320px] mx-auto px-6 md:px-10 grid lg:grid-cols-[1fr_minmax(0,440px)] gap-10 lg:gap-12 items-center">
+          {/* copy */}
+          <div className="relative z-10 order-2 lg:order-1">
+            <div className="mono-label flex items-center gap-3 mb-6" style={{ color: "var(--fg)", opacity: 0.55 }}>
+              <span style={{ color: C.rose }}>Vol. 01</span>
+              <span className="w-8 h-px" style={{ background: "currentColor" }} />
+              <span>The science of your face</span>
+            </div>
 
-          <h1 className="font-display leading-[0.9] tracking-[-0.03em]" style={{ color: C.ink, fontSize: "clamp(3.1rem, 8.2vw, 6.6rem)" }}>
-            {["Your face,", "by the"].map((line, i) => (
-              <motion.span
-                key={line}
-                className="block"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, ease: EASE, delay: 0.2 + i * 0.12 }}
-              >
-                {line}
-              </motion.span>
-            ))}
-            <motion.span
-              className="block italic"
-              style={{ color: C.rose }}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: EASE, delay: 0.44 }}
-            >
-              numbers.
-            </motion.span>
-          </h1>
+            <h1 className="font-display leading-[0.92] tracking-[-0.03em]" style={{ color: "var(--fg)", fontSize: "clamp(2.6rem, 6.4vw, 5rem)" }}>
+              <span className="block">Your face,</span>
+              <span className="block">
+                by the <span className="italic" style={{ color: C.rose }}>numbers.</span>
+              </span>
+            </h1>
 
-          <motion.p
-            className="mt-7 max-w-[440px] text-[15px] md:text-[16px] leading-[1.7]"
-            style={{ color: C.ink60 }}
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: EASE, delay: 0.6 }}
-          >
-            Lumii maps <strong style={{ color: C.ink, fontWeight: 600 }}>584 landmarks</strong> across your face and
-            returns the most precise beauty read ever put in a pocket — then the exact routine to raise it.
-          </motion.p>
+            <p className="mt-6 max-w-[440px] text-[15px] md:text-[16px] leading-[1.7]" style={{ color: "var(--fg)", opacity: 0.62 }}>
+              584 landmarks. 75 measurements. Watch the unknown resolve into the most precise beauty
+              read ever put in a pocket — one number that finally means something.
+            </p>
 
-          <motion.div
-            className="mt-9 flex flex-wrap items-center gap-3"
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: EASE, delay: 0.72 }}
-          >
-            <AppleBadge />
-            <GoogleBadge />
-          </motion.div>
+            <div ref={badgesRef} className="mt-8 flex flex-wrap items-center gap-3" style={{ opacity: 0 }}>
+              <a href="#" className="group inline-flex items-center gap-3 rounded-full px-5 py-3 transition-transform active:scale-[0.97]" style={{ background: C.paper, color: C.ink }}>
+                <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor" aria-hidden>
+                  <path d="M17.05 12.04c-.03-2.6 2.12-3.85 2.22-3.91-1.21-1.77-3.1-2.01-3.77-2.04-1.6-.16-3.13.94-3.94.94-.82 0-2.07-.92-3.41-.9-1.75.03-3.37 1.02-4.27 2.59-1.82 3.16-.47 7.83 1.31 10.4.87 1.26 1.9 2.67 3.25 2.62 1.31-.05 1.8-.85 3.38-.85 1.57 0 2.01.85 3.39.82 1.4-.02 2.29-1.28 3.14-2.55.99-1.46 1.4-2.87 1.42-2.95-.03-.01-2.72-1.04-2.75-4.13M14.6 4.59c.72-.87 1.2-2.08 1.07-3.29-1.03.04-2.28.69-3.02 1.56-.66.77-1.24 2-1.08 3.18 1.15.09 2.32-.58 3.03-1.45" />
+                </svg>
+                <span className="text-left leading-none">
+                  <span className="block text-[8px] tracking-[0.18em] uppercase opacity-60 font-mono">Download on the</span>
+                  <span className="block text-[14px] font-semibold mt-[3px]">App Store</span>
+                </span>
+              </a>
+              <a href="#" className="group inline-flex items-center gap-3 rounded-full px-5 py-3 transition-transform active:scale-[0.97]" style={{ background: "transparent", color: C.paper, border: "1px solid rgba(244,238,228,0.28)" }}>
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" aria-hidden>
+                  <path d="M3 2.2v19.6a.6.6 0 0 0 .92.5l16.3-9.8a.6.6 0 0 0 0-1.03L3.92 1.7A.6.6 0 0 0 3 2.2Z" />
+                </svg>
+                <span className="text-left leading-none">
+                  <span className="block text-[8px] tracking-[0.18em] uppercase opacity-60 font-mono">Get it on</span>
+                  <span className="block text-[14px] font-semibold mt-[3px]">
+                    Google Play
+                    <span className="ml-1.5 align-middle text-[8px] tracking-[0.16em] px-1.5 py-[2px] rounded-full font-mono" style={{ background: C.rose, color: "#fff" }}>SOON</span>
+                  </span>
+                </span>
+              </a>
+            </div>
 
-          <motion.div
-            className="mono-label mt-7 flex items-center gap-3"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-          >
-            <span>Free at launch</span>
-            <span className="w-1 h-1 rounded-full" style={{ background: C.rose }} />
-            <span>Live now on iOS</span>
-          </motion.div>
+            <div ref={quoteRef} className="mt-7 max-w-[420px]" style={{ opacity: 0 }}>
+              <p className="font-display italic text-[17px] leading-[1.45]" style={{ color: "var(--fg)" }}>
+                “A defined lower third anchors the whole read.”
+              </p>
+              <p className="mono-label mt-3" style={{ color: "var(--fg)", opacity: 0.5 }}>Free at launch · Live now on iOS · Android soon</p>
+            </div>
+          </div>
+
+          {/* plate */}
+          <div className="relative flex justify-center lg:justify-end order-1 lg:order-2">
+            <span className="font-display absolute select-none italic pointer-events-none" style={{ color: C.rosePale, opacity: 0.38, fontSize: "clamp(8rem,18vw,15rem)", top: "-9%", right: "-3%", lineHeight: 1, zIndex: 0 }}>97</span>
+            <div ref={plateRef} className="relative" style={{ width: "min(440px, 80vw)", aspectRatio: "4 / 5", zIndex: 1, willChange: "transform" }}>
+              {cropMarks.map((c) => (
+                <span key={c} className={`absolute w-3 h-3 ${c}`} style={{ borderColor: "rgba(244,238,228,0.4)" }} />
+              ))}
+              <div ref={tabRef} className="mono-label absolute right-0 -top-7" style={{ color: "var(--fg)", opacity: 0.5 }}>PLATE 01 · UNREAD</div>
+              <div className="absolute inset-0 overflow-hidden rounded-[1.6rem]" style={{ background: "#0c0c0e" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img ref={softRef} src="/face2.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: "50% 45%", filter: "blur(7px) brightness(1.08) saturate(1.2)" }} draggable={false} />
+                <div ref={sharpRef} className="absolute inset-0" style={{ clipPath: "inset(0 0 100% 0)" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/face2.png" alt="" aria-hidden className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: "50% 45%", filter: "blur(0px) brightness(0.68) contrast(1.2) saturate(0.82)" }} draggable={false} />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(14,16,26,0.46), rgba(8,8,14,0.64))", mixBlendMode: "multiply" }} />
+                </div>
+                <div ref={vignRef} className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(120% 88% at 50% 34%, transparent 50%, rgba(8,8,12,0.62) 100%)", opacity: 0 }} />
+                <canvas ref={canvasRef} aria-hidden className="absolute inset-0 w-full h-full" />
+                <div ref={numWrapRef} className="absolute inset-x-0 text-center pointer-events-none" style={{ top: "57%", opacity: 0 }}>
+                  <div ref={outOfRef} className="mono-label" style={{ color: "rgba(244,238,228,0.6)", opacity: 0 }}>Out of 100</div>
+                  <div ref={numRef} className="font-display tabular-nums" style={{ color: C.rose, fontSize: "clamp(3.6rem, 11vw, 6.4rem)", lineHeight: 1 }}>0</div>
+                  <div ref={etherRef} className="font-display italic" style={{ color: C.rosePale, fontSize: "clamp(1.1rem, 3.2vw, 1.7rem)", opacity: 0 }}>ethereal</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* plate */}
-        <motion.div
-          className="relative flex justify-center lg:justify-end"
-          initial={{ opacity: 0, y: 40, rotate: -2 }}
-          animate={{ opacity: 1, y: 0, rotate: 0 }}
-          transition={{ duration: 1.1, ease: EASE, delay: 0.3 }}
-        >
-          {/* watermark 97 */}
-          <span
-            className="font-display absolute -z-0 select-none italic"
-            style={{ color: C.rosePale, opacity: 0.5, fontSize: "clamp(10rem,22vw,20rem)", top: "-6%", left: "-4%", lineHeight: 1 }}
-          >
-            97
-          </span>
-          <Plate src="/screenshots/app-score.jpg" fig="Fig. 01" caption="The read — Charlotte, 97" float width={296} />
-        </motion.div>
+        {/* scroll cue */}
+        <div ref={cueRef} className="mono-label absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ color: "var(--fg)", opacity: 0.6 }}>
+          <span>Scroll to develop</span>
+          <span style={{ fontSize: 14 }}>↓</span>
+        </div>
       </div>
     </section>
   );
@@ -613,7 +971,7 @@ function Colophon() {
             <div className="font-display text-[48px] leading-none">
               Lumii<span className="italic" style={{ color: C.rosePale }}>.</span>
             </div>
-            <p className="mono-label mt-5" style={{ color: "rgba(244,238,228,0.5)" }}>Built for girls, by girls</p>
+            <p className="mono-label mt-5" style={{ color: "rgba(244,238,228,0.5)" }}>Built for girls</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-12 gap-y-4">
             {[
@@ -645,7 +1003,7 @@ export default function Site() {
   return (
     <main className="relative overflow-x-hidden">
       <Masthead />
-      <Hero />
+      <ReadingRoomHero />
       <MetricsBand />
       <TheRead />
       <PullQuote />

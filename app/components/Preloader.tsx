@@ -82,7 +82,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
             transform: "translateY(10px)",
           }}
         >
-          Built for girls, by girls.
+          Built for girls.
         </div>
       </div>
     </div>
