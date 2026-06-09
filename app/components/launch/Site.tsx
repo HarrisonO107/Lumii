@@ -1001,7 +1001,10 @@ function Colophon() {
 
 export default function Site() {
   return (
-    <main className="relative overflow-x-hidden">
+    // overflow-x-clip (NOT hidden): hidden makes <main> a scroll container,
+    // which un-pins the hero's position:sticky stage. clip crops the same
+    // horizontal bleed without breaking sticky.
+    <main className="relative overflow-x-clip">
       <Masthead />
       <ReadingRoomHero />
       <MetricsBand />
