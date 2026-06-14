@@ -17,7 +17,7 @@ export default function TermsOfServicePage() {
         </>
       }
       effectiveDate="1 June 2026"
-      lastUpdated="1 June 2026"
+      lastUpdated="14 June 2026"
       intro={
         <p>
           These Terms of Service (&quot;<strong>Terms</strong>&quot;) are a legal agreement
@@ -134,6 +134,16 @@ export default function TermsOfServicePage() {
       <p>
         We may suspend or terminate your access, and we may reverse or refuse any promotional grant, if
         we reasonably believe you have breached these rules.
+      </p>
+
+      <p>
+        <strong>Reporting and moderation.</strong> Circle is not a place for abuse. Every shared post,
+        comment and profile includes tools to <strong>block</strong> the person and to <strong>report</strong>{" "}
+        the content to us with a reason. We review reports against these Terms and our content rules, and
+        we may <strong>remove or hide content, warn, suspend, or permanently terminate</strong> any account
+        we reasonably believe has breached the acceptable-use rules above — with or without notice. We aim
+        to act promptly on reports of serious harm, such as sexual content involving minors, threats, or
+        harassment. You can also reach our team at <strong>office@hfjo.co.uk</strong>.
       </p>
 
       <hr />

@@ -17,7 +17,7 @@ export default function PrivacyPolicyPage() {
         </>
       }
       effectiveDate="1 June 2026"
-      lastUpdated="1 June 2026"
+      lastUpdated="14 June 2026"
       intro={
         <>
           <p>
@@ -106,7 +106,7 @@ export default function PrivacyPolicyPage() {
           </ul>
           All Sentry data is processed in <strong>Frankfurt, Germany</strong> (Sentry&apos;s EU data-residency endpoint). Sentry does not use Lumii&apos;s data for advertising. Lumii does not sell Sentry&apos;s data, and Sentry&apos;s privacy policy commits it not to sell customer data. We chose Sentry rather than a US-based equivalent specifically to keep this data inside the European Economic Area.
         </li>
-        <li><strong>In-app usage events:</strong> in-app events such as which screens you visit, when you complete a scan, and how often you open the app. These events are stored <strong>on your device</strong> for personalisation; we do not currently send them to any third-party analytics provider.</li>
+        <li><strong>In-app usage events:</strong> in-app events such as which screens you visit, when you complete a scan, and how often you open the app. Some of these events are sent to <strong>our own backend</strong> (our Supabase database in London) and shown in a <strong>private internal dashboard</strong> we use to understand how Lumii is used and to improve it. These are <strong>first-party</strong> analytics: we do <strong>not</strong> send them to any third-party analytics provider, and we do not sell them.</li>
       </ul>
 
       <h3>3.3 Information generated about you</h3>
@@ -161,6 +161,25 @@ export default function PrivacyPolicyPage() {
         on lumiiapp.com only accept users who select an age category of 13 or older; users selecting a
         lower age cannot submit the form. We do not knowingly collect personal information from anyone
         under 13 via the website.
+      </p>
+
+      <h3>3.7 Circle (social features)</h3>
+      <p>
+        Lumii includes an optional social feature called <strong>Circle</strong>. If you choose to use
+        it, we process additional information so you can connect with friends and share progress:
+      </p>
+      <ul>
+        <li><strong>Friend connections.</strong> The accepted friend relationships you create, and any pending friend requests you send or receive. We store these so we can show you your friends&apos; shared activity.</li>
+        <li><strong>Content you share to your Circle.</strong> When you post a &quot;Glow Proof&quot;, we store what you choose to include: the habits you completed or missed that day, your current streak, an optional caption, and an optional photo. Photos you share to Circle are uploaded to our server, stripped of location (EXIF/GPS) metadata, downscaled, and stored privately — they are shown only to your accepted friends, never publicly and never to advertisers.</li>
+        <li><strong>Reactions and comments.</strong> Reactions you add to friends&apos; posts, and any comments, together with who made them.</li>
+        <li><strong>Challenges.</strong> If you join or create a challenge, we store your membership, your daily check-ins, and aggregated leaderboard counts visible to other members of that challenge.</li>
+        <li><strong>Safety data.</strong> If you block a user we record the block so we can keep you apart in the feed. If you report content or a user, we record the report — the target, the reason you selected, and the time — so our team can review it.</li>
+      </ul>
+      <p>
+        Circle content is shared only with the friends you accept; Lumii has no public feed. You can
+        remove a friend, block a user, or delete your shared posts at any time, and deleting your account
+        removes your Circle content as described in Section 6. We may remove content and suspend accounts
+        that breach our Terms of Service (see &quot;Acceptable use&quot;).
       </p>
 
       <hr />
